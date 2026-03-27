@@ -1,0 +1,12 @@
+(defvar emacs-cache-dir (expand-file-name "emacs/" (or (getenv "XDG_CACHE_HOME") "~/.cache")))
+(unless (file-exists-p emacs-cache-dir)
+  (make-directory emacs-cache-dir t))
+(setq backup-directory-alist `(("." . ,(expand-file-name "backups/" emacs-cache-dir))))
+(setq auto-save-file-name-transforms `((".*" ,(expand-file-name "auto-save/" emacs-cache-dir) t)))
+(setq savehist-file (expand-file-name "history" emacs-cache-dir))
+(savehist-mode 1)
+(setq recentf-save-file (expand-file-name "recentf" emacs-cache-dir))
+(recentf-mode 1)
+(setq create-lockfiles nil)
+
+(provide 'cache-setup)

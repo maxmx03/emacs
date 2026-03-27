@@ -1,6 +1,7 @@
+(add-to-list 'load-path (expand-file-name "modules" user-emacs-directory))
 (setq read-process-output-max (* 1024 1024)) ;; 1mb
 (setq gc-cons-threshold 100000000)
-
+(require 'cache-setup)
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
