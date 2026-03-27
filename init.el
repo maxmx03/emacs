@@ -18,7 +18,7 @@
   (tooltip-mode -1)
   (column-number-mode t)
   (global-display-line-numbers-mode t)
-  (completion-preview-mode)
+  (which-key-mode t)
   (set-face-attribute 'default nil
 		      :font "JetBrainsMono NF" 
                       :height 160
@@ -52,6 +52,13 @@
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (when (file-exists-p custom-file)
   (load custom-file))
+
+(use-package multiple-cursors
+  :ensure t
+  :bind (("C-c d" . mc/mark-all-like-this))
+  :config
+  (add-hook 'multiple-cursors-mode-enabled-hook 'meow-insert-mode)
+  (add-hook 'multiple-cursors-mode-disabled-hook 'meow-normal-mode))
 
 (use-package meow
   :ensure t

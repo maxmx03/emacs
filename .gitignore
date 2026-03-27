@@ -53,3 +53,4 @@ url/
 games/
 eln-cache/
 transient/
+.mc-lists.el
