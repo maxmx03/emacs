@@ -54,3 +54,4 @@ games/
 eln-cache/
 transient/
 .mc-lists.el
+tree-sitter/
