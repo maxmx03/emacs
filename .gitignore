@@ -55,3 +55,7 @@ eln-cache/
 transient/
 .mc-lists.el
 tree-sitter/
+friendly-snippets/
+projects
+mason/
+custom.el

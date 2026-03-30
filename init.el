@@ -23,11 +23,7 @@
   (column-number-mode t)
   (global-display-line-numbers-mode t)
   (which-key-mode t)
-  (set-face-attribute 'default nil
-		      :font "JetBrainsMono NF" 
-                      :height 160
-                      :weight 'medium)
-  (add-to-list 'default-frame-alist '(font . "JetBrainsMono NF-16")))
+  (set-face-attribute 'default nil :font "JetBrainsMono NF" :height 160))
 
 (use-package autothemer
   :ensure t
