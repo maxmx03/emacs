@@ -38,7 +38,7 @@
    (font-lock-string-face        (:foreground oxocarbon-sky))
    (font-lock-function-name-face (:foreground oxocarbon-green))
    (font-lock-variable-name-face (:foreground oxocarbon-base04))
-   (font-lock-type-face           (:foreground oxocarbon-blue))
+   (font-lock-type-face           (:foreground oxocarbon-red))
    (font-lock-constant-face       (:foreground oxocarbon-blue))
    (font-lock-builtin-face        (:foreground oxocarbon-magenta))
    (font-lock-preprocessor-face   (:foreground oxocarbon-violet))

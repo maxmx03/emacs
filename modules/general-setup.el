@@ -33,8 +33,8 @@
   "u" 'undo
   "U" 'undo-redo
   "q" 'kill-current-buffer
-  "f" 'word-search-forward
-  "F" 'word-search-backward
+  "f" 'search-forward
+  "F" 'search-backward
   "r" 'consult-buffer
   "g" 'end-of-buffer
   "G" 'beginning-of-buffer
