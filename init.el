@@ -4,7 +4,7 @@
 (require 'cache-setup)
 (require 'package)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/") ;; Sets default package repositories
-                         ("elpa" . "https://elpa.gnu.org/packages/")
+			 ("elpa" . "https://elpa.gnu.org/packages/")
                          ("nongnu" . "https://elpa.nongnu.org/nongnu/"))) ;; For Eat Terminal
 (package-initialize)
 

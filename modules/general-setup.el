@@ -1,6 +1,6 @@
 (defvar-keymap my-normal-mode-map
   :doc "Keybindings for Normal Mode."
-  "o" 'new-line-bellow
+  "o" 'new-line-below
   "O" 'new-line-above
   "a" 'beginning-of-line
   "A" 'end-of-line
@@ -57,6 +57,20 @@
    ((window-minibuffer-p) (abort-recursive-edit))
    (t (my-normal-mode 1))))
 
+(defun new-line-below ()
+  "Insert new line below cursor"
+  (interactive)
+  (end-of-line)
+  (newline-and-indent)    
+  (my-exit-normal-mode))
+
+(defun new-line-above ()
+  "Insert new line above cursor"
+  (interactive)
+  (read-only-mode -1)
+  (beginning-of-line)
+  (open-line 1)
+  (my-exit-normal-mode))
 
 (global-set-key (kbd "<escape>") #'my/smart-esc)
 
