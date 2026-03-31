@@ -1,6 +1,4 @@
 (add-to-list 'load-path (expand-file-name "modules" user-emacs-directory))
-(setq read-process-output-max (* 1024 1024)) ;; 1mb
-(setq gc-cons-threshold 100000000)
 (require 'cache-setup)
 (require 'package)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/") ;; Sets default package repositories
@@ -17,12 +15,15 @@
   :config
   (setq inhibit-startup-message t)
   (setq org-clock-sound "~/Músicas/mixkit-on-hold-ringtone-1361.wav")
-  (menu-bar-mode -1)
-  (tool-bar-mode -1)
-  (tooltip-mode -1)
   (column-number-mode t)
   (global-display-line-numbers-mode t)
   (which-key-mode t)
+  (electric-indent-mode nil)  ;; Turn off the weird indenting that Emacs does by default.
+  (electric-pair-mode t)      ;; Turns on automatic parens pairing
+  (global-auto-revert-mode t) ;; Automatically reload file and show changes if the file has changed
+  (setq mouse-wheel-progressive-speed nil) ;; Velocidade constante no scroll
+  (setq scroll-conservatively 10)           ;; Evita que a tela "pule" (valor > 100 é o ideal)
+  (setq scroll-margin 8)                   ;; Mantém 8 linhas de respiro no topo/fundo
   (set-face-attribute 'default nil :font "JetBrainsMono NF" :height 160))
 (use-package autothemer
   :ensure t
@@ -43,6 +44,7 @@
 (require 'magit-setup)
 (require 'projectile-setup)
 (require 'consult-setup)
+(require 'dirvish-setup)
 
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (when (file-exists-p custom-file)

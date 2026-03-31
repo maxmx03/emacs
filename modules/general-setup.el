@@ -53,7 +53,8 @@
   "i" 'my-exit-normal-mode
   ";" 'comment-line
   "M-<up>" 'org-drag-line-backward
-  "M-<down>" 'org-drag-line-forward)
+  "M-<down>" 'org-drag-line-forward
+  "n" 'dired)
 
 (use-package expand-region :ensure t)
 (use-package multiple-cursors
