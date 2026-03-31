@@ -1,5 +1,9 @@
 (defvar-keymap my-normal-mode-map
   :doc "Keybindings for Normal Mode."
+  ;;"l" 'forward-char
+  ;;"h" 'backward-char
+  ;;"j" 'next-line
+  ;; "k" 'previous-line
   "o" 'new-line-below
   "O" 'new-line-above
   "a" 'beginning-of-line
@@ -30,7 +34,10 @@
   "c" 'delete-char
   "C" 'backward-delete-char
   "C-d" 'mc/mark-all-like-this
-  "i" 'my-exit-normal-mode)
+  "i" 'my-exit-normal-mode
+  ";" 'comment-line
+  "M-<up>" 'org-drag-line-backward
+  "M-<down>" 'org-drag-line-forward)
 
 (define-minor-mode my-normal-mode
   "Change to normal mode"
