@@ -24,6 +24,9 @@
    (oxocarbon-red     "#ee5396") ;; base0A (base_16) - Classes
    (oxocarbon-sky     "#33b1ff") ;; base0B (base_16) - Strings
    (oxocarbon-orange  "#F8BD96") ;; base0C (base_30)
+   (oxocarbon-yellow  "#FAE3B0") ;; base0C (base_30)
+
+   (oxocarbon-yellow-shade "#38352d")
   )
 
   ;; 2. MAPEAMENTO DE FACES (Onde a mágica acontece)
@@ -31,6 +34,7 @@
    (default (:foreground oxocarbon-fg :background oxocarbon-bg))
    (region  (:background oxocarbon-base02))
    (cursor  (:background oxocarbon-cyan))
+   (highlight (:background oxocarbon-yellow-shade :foreground oxocarbon-yellow))
 
    ;; Sintaxe Programação (Standard)
    (font-lock-comment-face       (:foreground oxocarbon-base03 :italic t))
@@ -64,10 +68,26 @@
    (org-level-1 (:foreground oxocarbon-magenta :bold t :height 1.2))
    (org-level-2 (:foreground oxocarbon-blue :bold t :height 1.1))
    (org-level-3 (:foreground oxocarbon-cyan :bold t))
+   (org-todo (:foreground oxocarbon-orange))
+   (org-modern-todo (:foreground oxocarbon-orange))
+   (org-modern-done (:foreground oxocarbon-green))
    
    ;; Flycheck/Eglot Errors
    (error   (:foreground oxocarbon-red :bold t))
    (warning (:foreground oxocarbon-orange))
+
+   ;; dirvish
+   (dirvish-hl-line (:background oxocarbon-yellow-shade :foreground oxocarbon-yellow))
+   
+   ;; nerd-icons
+   (nerd-icons-red (:foreground oxocarbon-red))
+   (nerd-icons-blue (:foreground oxocarbon-blue))
+   (nerd-icons-cyan (:foreground oxocarbon-cyan))
+   (nerd-icons-pink (:foreground oxocarbon-magenta))
+   (nerd-icons-green (:foreground oxocarbon-green))
+   (nerd-icons-purple (:foreground oxocarbon-violet))
+   (nerd-icons-orange (:foreground oxocarbon-orange))
+   (nerd-icons-yellow (:foreground oxocarbon-yellow))
   )
 )
 

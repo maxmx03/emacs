@@ -35,7 +35,9 @@
   "q" 'kill-current-buffer
   "f" 'search-forward
   "F" 'search-backward
-  "r" 'consult-buffer
+  "r" 'consult-find
+  "R" 'consult-grep
+  "b" 'consult-buffer
   "g" 'end-of-buffer
   "G" 'beginning-of-buffer
   "m" 'mark-word
