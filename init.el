@@ -24,27 +24,25 @@
   (global-display-line-numbers-mode t)
   (which-key-mode t)
   (set-face-attribute 'default nil :font "JetBrainsMono NF" :height 160))
-
 (use-package autothemer
   :ensure t
   :config
   (add-to-list 'custom-theme-load-path "~/.config/emacs/themes/")
   (load-theme 'oxocarbon t))
-
 (use-package command-log-mode
   :ensure t)
-
 (use-package nerd-icons
   :ensure t)
 
-(require 'dirvish-setup)
-(require 'meow-setup)
+(require 'general-setup)
 (require 'org-setup)
 (require 'vertico-setup)
 (require 'corfu-setup)
 (require 'treesitter-setup)
 (require 'dashboard-setup)
 (require 'magit-setup)
+(require 'projectile-setup)
+(require 'consult-setup)
 
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (when (file-exists-p custom-file)
