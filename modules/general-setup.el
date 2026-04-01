@@ -1,5 +1,8 @@
+
 (defvar-keymap my-expand-mode-map
   :doc "Keybinds for Expand Mode."
+  "y" 'kill-ring-save
+  "d" 'kill-region
   "w" 'er/mark-word
   "q" 'er/mark-inside-quotes
   "Q" 'er/mark-outside-quotes
@@ -7,7 +10,7 @@
   "P" 'er/mark-outside-pairs
   "c" 'er/mark-comment
   "u" 'er/mark-url
-  "d" 'er/mark-defun
+  ;; "d" 'er/mark-defun
   "f" 'er/mark-method-call
   "t" 'er/mark-inner-tag
   "T" 'er/mark-outer-tag
@@ -55,8 +58,9 @@
   "i" 'my-exit-normal-mode
   ";" 'comment-line
   "M-<up>" 'org-drag-line-backward
-  "M-<down>" 'org-drag-line-forward)
-  ;;"n" 'dired)
+  "M-<down>" 'org-drag-line-forward
+  "n" 'dired
+  "p" 'yank)
 
 (use-package expand-region :ensure t)
 (use-package multiple-cursors
@@ -144,4 +148,3 @@
 (keymap-set my-normal-mode-map "SPC" my-org-roam-map)
 
 (provide 'general-setup)
- 

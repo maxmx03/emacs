@@ -21,9 +21,9 @@
   (electric-indent-mode nil)  ;; Turn off the weird indenting that Emacs does by default.
   (electric-pair-mode t)      ;; Turns on automatic parens pairing
   (global-auto-revert-mode t) ;; Automatically reload file and show changes if the file has changed
-  (setq mouse-wheel-progressive-speed nil) ;; Velocidade constante no scroll
-  (setq scroll-conservatively 10)           ;; Evita que a tela "pule" (valor > 100 é o ideal)
-  (setq scroll-margin 8)                   ;; Mantém 8 linhas de respiro no topo/fundo
+  (setq mouse-wheel-progressive-speed nil)
+  (setq scroll-conservatively 10)
+  (setq scroll-margin 8)
   (set-face-attribute 'default nil :font "JetBrainsMono NF" :height 160))
 
 (use-package autothemer
@@ -49,6 +49,7 @@
 (require 'projectile-setup)
 (require 'consult-setup)
 (require 'dirvish-setup)
+(require 'lsp-mode-setup)
 
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (when (file-exists-p custom-file)

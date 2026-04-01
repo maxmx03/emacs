@@ -46,6 +46,8 @@
    (font-lock-constant-face       (:foreground oxocarbon-blue))
    (font-lock-builtin-face        (:foreground oxocarbon-magenta))
    (font-lock-preprocessor-face   (:foreground oxocarbon-violet))
+   (font-lock-property-name-face (:foreground oxocarbon-cyan))
+   (font-lock-property-use-face (:foreground oxocarbon-cyan))
 
    ;; --- TREE-SITTER FACES (Para o add ficar colorido!) ---
    (treesit-font-lock-function-name-face (:foreground oxocarbon-green))
@@ -57,7 +59,7 @@
    (treesit-font-lock-keyword-face       (:foreground oxocarbon-violet :bold t))
    (treesit-font-lock-string-face        (:foreground oxocarbon-sky))
    (treesit-font-lock-operator-face      (:foreground oxocarbon-fg))
-
+   
    ;; UI
    (line-number                  (:foreground oxocarbon-base03 :background oxocarbon-bg))
    (line-number-current-line      (:foreground oxocarbon-fg :background oxocarbon-base01 :bold t))

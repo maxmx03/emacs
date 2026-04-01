@@ -62,3 +62,5 @@ custom.el
 projectile-bookmarks.eld
 bookmarks
 org-roam.db
+.cache/
+.lsp-session-v1

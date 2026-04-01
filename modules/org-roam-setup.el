@@ -6,15 +6,21 @@
   :config
   (org-roam-db-autosync-mode)
   (setq org-roam-capture-templates
-        '(("d" "default" plain "%?"
-           :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+filetags: \n")
-           :unnarrowed t)
-          ("p" "permanent" plain "%?"
-           :target (file+head "permanent/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+filetags: :permanent:\n")
-           :unnarrowed t)
-          ("l" "literature" plain "%?"
-           :target (file+head "literature/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+filetags: :literature:\n")
-           :unnarrowed t))))
+      '(
+        ("p" "permanent" plain "%?"
+         :target (file+head "permanent/%^{Subpasta}/%<%Y%m%d%H%M%S>-${slug}.org" 
+                            "#+title: ${title}\n#+filetags: :permanent:\n")
+         :unnarrowed t)
+
+        ("l" "literature" plain "%?"
+         :target (file+head "literature/%^{Subpasta}/%<%Y%m%d%H%M%S>-${slug}.org" 
+                            "#+title: ${title}\n#+filetags: :literature:\n")
+         :unnarrowed t)
+       
+        ("d" "default" plain "%?"
+         :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" 
+                            "#+title: ${title}\n")
+         :unnarrowed t))))
 
 (use-package org-roam-ui
   :ensure t
