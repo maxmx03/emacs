@@ -15,8 +15,13 @@
      (emacs-lisp . t)
      (shell . t)))
 
-  (setq org-agenda-files '("~/Documentos/org-agenda/tasks.org"))
-
+  (setq org-agenda-files '("~/.org/"))
+  (setq org-todo-keywords
+	'((sequence "TODO(t)" "DOING(i)" "|" "DONE(d)" "CANCELLED(c)")))
+  (setq org-capture-templates
+      '(("t" "Todo" entry (file+headline "~/.org/tasks.org" "Tasks")
+         "* TODO %?\n  %i\n  %a")))
+  
   (setq org-agenda-start-with-log-mode t)
   (setq org-log-done 'time)
   (setq org-log-into-drawer t)

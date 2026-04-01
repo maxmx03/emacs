@@ -55,8 +55,8 @@
   "i" 'my-exit-normal-mode
   ";" 'comment-line
   "M-<up>" 'org-drag-line-backward
-  "M-<down>" 'org-drag-line-forward
-  "n" 'dired)
+  "M-<down>" 'org-drag-line-forward)
+  ;;"n" 'dired)
 
 (use-package expand-region :ensure t)
 (use-package multiple-cursors
@@ -133,4 +133,15 @@
 (dolist (hook '(prog-mode-hook org-mode-hook text-mode-hook))
   (add-hook hook #'my-normal-mode))
 
+(defvar-keymap my-org-roam-map
+  :doc "Atalhos para o Zettelkasten."
+  "f" 'org-roam-node-find
+  "i" 'org-roam-node-insert
+  "c" 'org-roam-capture
+  "g" 'org-roam-ui-mode
+  "t" 'org-capture)
+
+(keymap-set my-normal-mode-map "SPC" my-org-roam-map)
+
 (provide 'general-setup)
+ 

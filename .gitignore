@@ -60,3 +60,5 @@ projects
 mason/
 custom.el
 projectile-bookmarks.eld
+bookmarks
+org-roam.db

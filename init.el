@@ -25,6 +25,7 @@
   (setq scroll-conservatively 10)           ;; Evita que a tela "pule" (valor > 100 é o ideal)
   (setq scroll-margin 8)                   ;; Mantém 8 linhas de respiro no topo/fundo
   (set-face-attribute 'default nil :font "JetBrainsMono NF" :height 160))
+
 (use-package autothemer
   :ensure t
   :config
@@ -34,9 +35,12 @@
   :ensure t)
 (use-package nerd-icons
   :ensure t)
+(unless (file-directory-p "~/.org/")
+  (make-directory "~/.org/" t))
 
 (require 'general-setup)
 (require 'org-setup)
+(require 'org-roam-setup)
 (require 'vertico-setup)
 (require 'corfu-setup)
 (require 'treesitter-setup)
