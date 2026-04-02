@@ -3,13 +3,15 @@
   :doc "Keybinds for Expand Mode."
   "y" 'kill-ring-save
   "d" 'kill-region
+  "u" 'upcase-region
+  "l" 'downcase-region
   "w" 'er/mark-word
   "q" 'er/mark-inside-quotes
   "Q" 'er/mark-outside-quotes
   "p" 'er/mark-inside-pairs
   "P" 'er/mark-outside-pairs
   "c" 'er/mark-comment
-  "u" 'er/mark-url
+  ;; "u" 'er/mark-url
   ;; "d" 'er/mark-defun
   "f" 'er/mark-method-call
   "t" 'er/mark-inner-tag
@@ -18,17 +20,16 @@
 
 (defvar-keymap my-normal-mode-map
   :doc "Keybindings for Normal Mode."
-  ;;"l" 'forward-char
-  ;;"h" 'backward-char
-  ;;"j" 'next-line
-  ;; "k" 'previous-line
+  "0" 'delete-window
+  "1" 'delete-other-windows
+  "2" 'split-window-below
+  "3" 'split-window-right
   "o" 'new-line-below
   "O" 'new-line-above
   "a" 'beginning-of-line
   "A" 'end-of-line
   "e" 'end-of-line
   "E" 'beginning-of-line
-  "0" 'beginning-of-line
   "$" 'end-of-line
   "w" 'right-word
   "W" 'left-word
@@ -43,9 +44,7 @@
   "b" 'consult-buffer
   "g" 'end-of-buffer
   "G" 'beginning-of-buffer
-  "m" 'mark-word
-  "v" 'set-mark-command
-  "V" 'my-expand-mode
+  "v" 'my-expand-mode
   "k" 'kill-line
   "K" 'kill-sentence
   "x" 'execute-extended-command
@@ -56,11 +55,12 @@
   "C" 'backward-delete-char
   "C-d" 'mc/mark-all-like-this
   "i" 'my-exit-normal-mode
-  ";" 'comment-line
+  "\\" 'comment-line
   "M-<up>" 'org-drag-line-backward
   "M-<down>" 'org-drag-line-forward
   "n" 'dired
-  "p" 'yank)
+  "p" 'yank
+  "SPC" 'set-mark-command)
 
 (use-package expand-region :ensure t)
 (use-package multiple-cursors
@@ -145,6 +145,6 @@
   "g" 'org-roam-ui-mode
   "t" 'org-capture)
 
-(keymap-set my-normal-mode-map "SPC" my-org-roam-map)
+(keymap-set my-normal-mode-map ";" my-org-roam-map)
 
 (provide 'general-setup)

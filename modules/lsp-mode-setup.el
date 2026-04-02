@@ -37,4 +37,16 @@
   :ensure t
   :after yasnippet)
 
+(use-package apheleia
+  :ensure t
+  :config
+  (apheleia-global-mode +1)
+  (setq apheleia-formatters
+        '((clang-format . ("clang-format" "-style=file"))
+          (stylua . ("stylua" "-"))))
+  (setq apheleia-mode-alist
+        '((c-mode . clang-format)
+          (c++-mode . clang-format)
+          (lua-mode . stylua))))
+
 (provide 'lsp-mode-setup)
