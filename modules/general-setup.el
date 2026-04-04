@@ -20,20 +20,21 @@
 
 (defvar-keymap my-normal-mode-map
   :doc "Keybindings for Normal Mode."
-  "0" 'delete-window
   "1" 'delete-other-windows
   "2" 'split-window-below
   "3" 'split-window-right
+  "0" 'beginning-of-line
   "o" 'new-line-below
   "O" 'new-line-above
-  "a" 'beginning-of-line
-  "A" 'end-of-line
-  "e" 'end-of-line
-  "E" 'beginning-of-line
+  "a" 'insert-mode-beginning-line
+  "A" 'insert-mode-end-line
+  "e" 'insert-mode-end-line
+  "E" 'insert-mode-beginning-line
   "$" 'end-of-line
   "w" 'right-word
   "W" 'left-word
   "y" 'kill-ring-save
+  "Y" 'copy-line
   "u" 'undo
   "U" 'undo-redo
   "q" 'kill-current-buffer
@@ -117,6 +118,18 @@
    ((or my-expand-mode (region-active-p)) (my-enter-normal-mode))
    (t (my-enter-normal-mode))))
 
+(defun insert-mode-end-line ()
+  "Enter in insert mode at end of line"
+  (interactive)
+  (end-of-line)
+  (my-normal-mode -1))
+
+(defun insert-mode-beginning-line ()
+  "Enter in insert mode at begin of line"
+  (interactive)
+  (beginning-of-line)
+  (my-normal-mode -1))
+
 (defun new-line-below ()
   "Open a new line below and enter insert mode."
   (interactive)
@@ -136,6 +149,11 @@
 
 (dolist (hook '(prog-mode-hook org-mode-hook text-mode-hook))
   (add-hook hook #'my-normal-mode))
+
+(defun copy-line ()
+  (interactive)
+  (save-excursion
+    (kill-ring-save (line-beginning-position) (line-end-position))))
 
 (defvar-keymap my-org-roam-map
   :doc "Atalhos para o Zettelkasten."

@@ -8,6 +8,7 @@
                           (agenda   . 5))) ;; O que tem pra hoje no Org-mode
   
   ;; Estética (já que você usa nerd-icons)
+  (setq dashboard-projects-backend 'projectile)
   (setq dashboard-display-icons-p t) 
   (setq dashboard-icon-type 'nerd-icons)
   (setq dashboard-set-heading-icons t)
