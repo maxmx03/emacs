@@ -1,4 +1,3 @@
-
 (defvar-keymap my-expand-mode-map
   :doc "Keybinds for Expand Mode."
   "y" 'kill-ring-save

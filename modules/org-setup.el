@@ -24,7 +24,10 @@
 	'((sequence "TODO(t)" "DOING(i)" "|" "DONE(d)" "CANCELLED(c)")))
   (setq org-capture-templates
       '(("t" "Todo" entry (file+headline "~/.org/tasks.org" "Tasks")
-         "* TODO %?\n  %i\n  %a")))
+         "* TODO %?\n")
+	("p" "Project" entry (file+headline "~/.org/project-task.org" "Tasks")
+         "* TODO %?\n")
+	))
   
   (setq org-agenda-start-with-log-mode t)
   (setq org-log-done 'time)
