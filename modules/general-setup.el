@@ -39,19 +39,20 @@
   "e" 'move-end-of-line
   "E" 'forward-sentence
   "f" 'forward-word
-  "g" 'end-of-buffer
-  "G" 'beginning-of-buffer
+  "g" 'keyboard-quit
+  ">" 'end-of-buffer
+  "<" 'beginning-of-buffer
   "j" 'electric-newline-and-maybe-indent
   "k" 'kill-whole-line
   "l" 'recenter-top-bottom
   "n" 'next-line
   "o" 'insert-nextline
   "O" 'insert-prevline
-  "q" 'quoted-insert
+  "q" 'delete-window
   "r" 'isearch-backward
   "s" 'isearch-forward
   "i" 'insert-mode
-  "u" 'redo
+  "u" 'undo-redo
   "/" 'undo
   "w" 'kill-region
   "y" 'kill-ring-save
@@ -68,7 +69,7 @@
   "m d" 'mark-defun
   "m m" 'er/mark-method-call
   "m t" 'er/mark-inner-tag
-  "SPC" 'set-mark-command)
+  "v" 'set-mark-command)
 
 (define-minor-mode insert-minor-mode
   "Enter insert mode, user can edit file"
@@ -100,15 +101,45 @@
 
 (global-set-key (kbd "<escape>") #'my/smart-esc)
 
-(defvar-keymap my-org-roam-map
-  :doc "Atalhos para o Zettelkasten."
-  "f" 'org-roam-node-find
-  "i" 'org-roam-node-insert
-  "c" 'org-roam-capture
-  "g" 'org-roam-ui-mode
-  "t" 'org-capture)
+(defvar-keymap my-keymaps
+  :doc "Shortcuts"
+  "o f" 'org-roam-node-find
+  "o i" 'org-roam-node-insert
+  "o c" 'org-roam-capture
+  "o u" 'org-roam-ui-mode
+  "o t" 'org-capture
+  "d" 'dired
+  "c f" 'consult-find
+  "c g" 'consult-grep
+  "c b" 'consult-buffer
+  "c a" 'consult-org-agenda
+  "w"   'save-buffer
+  "m m" 'magit
+  "m c" 'magit-commit
+  "m l" 'magit-log
+  "m P" 'magit-push
+  "m p" 'magit-pull
+  "m d" 'magit-diff
+  "m b" 'magit-blame
+  "m s" 'magit-status)
 
-(keymap-set normal-mode-map ";" my-org-roam-map)
+(which-key-add-keymap-based-replacements my-keymaps
+  "o"   "org"
+  "o f" "find node"
+  "o i" "insert node"
+  "o c" "capture node"
+  "o u" "roam UI"
+  "o t" "org capture"
+  "d"   "dired"
+  "c"   "consult"
+  "c f" "consult find"
+  "c g" "consult grep"
+  "c b" "consult buffer"
+  "c a" "consult agenda"
+  "w" "save buffer"
+  "m" "magit")
+
+(keymap-set normal-mode-map ";" my-keymaps)
 
 (dolist (hook '(prog-mode-hook org-mode-hook text-mode-hook))
   (add-hook hook #'normal-minor-mode))

@@ -18,6 +18,7 @@
   (column-number-mode t)
   (global-display-line-numbers-mode t)
   (which-key-mode t)
+  (setq which-key-separator " → " )
   (electric-indent-mode nil)  ;; Turn off the weird indenting that Emacs does by default.
   (electric-pair-mode t)      ;; Turns on automatic parens pairing
   (global-auto-revert-mode t) ;; Automatically reload file and show changes if the file has changed
