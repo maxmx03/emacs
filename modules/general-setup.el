@@ -39,7 +39,8 @@
   "e" 'move-end-of-line
   "E" 'forward-sentence
   "f" 'forward-word
-  "g" 'keyboard-quit
+  "g" 'beginning-of-buffer
+  "G" 'end-of-buffer
   ">" 'end-of-buffer
   "<" 'beginning-of-buffer
   "j" 'electric-newline-and-maybe-indent
