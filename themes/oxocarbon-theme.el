@@ -91,6 +91,11 @@
    (nerd-icons-purple (:foreground oxocarbon-violet))
    (nerd-icons-orange (:foreground oxocarbon-orange))
    (nerd-icons-yellow (:foreground oxocarbon-yellow))
+
+   ;; doom modeline
+   (doom-modeline-info (:foreground oxocarbon-green))
+   (doom-modeline-lsp-running (:foreground oxocarbon-yellow))
+   (doom-modeline-bar (:background oxocarbon-sky))
   )
 )
 

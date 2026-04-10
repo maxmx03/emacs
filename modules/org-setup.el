@@ -7,7 +7,7 @@
   :config
   (set-face-attribute 'org-level-1 nil :height 1.2 :weight 'bold)
   (set-face-attribute 'org-level-2 nil :height 1.1 :weight 'bold)
-
+  (require 'ox-md)
   (require 'org-tempo)
   (add-to-list 'org-structure-template-alist '("cpp" . "src cpp"))
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
