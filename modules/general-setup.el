@@ -44,7 +44,8 @@
   ">" 'end-of-buffer
   "<" 'beginning-of-buffer
   "j" 'electric-newline-and-maybe-indent
-  "k" 'kill-whole-line
+  "k" 'kill-line
+  "K" 'kill-whole-line
   "l" 'recenter-top-bottom
   "n" 'next-line
   "o" 'insert-nextline
@@ -70,7 +71,10 @@
   "m d" 'mark-defun
   "m m" 'er/mark-method-call
   "m t" 'er/mark-inner-tag
-  "v" 'set-mark-command)
+  "v" 'set-mark-command
+  "M-<up>" 'org-drag-line-backward
+  "M-<down>" 'org-drag-line-forward
+  )
 
 (define-minor-mode insert-minor-mode
   "Enter insert mode, user can edit file"

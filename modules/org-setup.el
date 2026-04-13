@@ -1,5 +1,8 @@
 (use-package org
   :ensure nil
+  :hook (org-mode . (lambda ()
+                      (setq fill-column 80)
+                      (auto-fill-mode 1)))
   :custom
   (org-ellipsis " ▾")
   (org-hide-emphasis-markers t)
