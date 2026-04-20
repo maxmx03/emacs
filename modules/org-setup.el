@@ -1,6 +1,7 @@
 (use-package org
   :ensure nil
   :hook (org-mode . (lambda ()
+		      (setq org-startup-with-latex-preview t)
                       (setq fill-column 80)
                       (auto-fill-mode 1)))
   :custom
@@ -31,11 +32,12 @@
 	("p" "Project" entry (file+headline "~/.org/project-task.org" "Tasks")
          "* TODO %?\n")
 	))
-  
+  (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
+  (setq org-startup-with-inline-images t)
   (setq org-agenda-start-with-log-mode t)
   (setq org-log-done 'time)
   (setq org-log-into-drawer t)
-  
+
   (setq org-latex-remove-logfiles t)
   (setq org-confirm-bash-evaluate nil
         org-confirm-babel-evaluate nil)
