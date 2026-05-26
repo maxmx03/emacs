@@ -1,98 +1,47 @@
-(add-to-list 'load-path (expand-file-name "modules" user-emacs-directory))
-(require 'cache-setup)
 (require 'package)
-(setq package-archives '(("melpa" . "https://melpa.org/packages/") ;; Sets default package repositories
-			 ("elpa" . "https://elpa.gnu.org/packages/")
-                         ("nongnu" . "https://elpa.nongnu.org/nongnu/"))) ;; For Eat Terminal
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+;; Comment/uncomment this line to enable MELPA Stable if desired.  See `package-archive-priorities`
+;; and `package-pinned-packages`. Most users will not need or want to do this.
+;;(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
 (package-initialize)
-
-;; Running package-refresh-contents to ensure that Emacs has fetch the MELPA package list
-(unless package-archive-contents
-  (package-refresh-contents))
-
-(use-package emacs
-  :ensure nil
-  :config
-  (setq inhibit-startup-message t)
-  (setq org-clock-sound "~/Músicas/mixkit-on-hold-ringtone-1361.wav")
-  (column-number-mode t)
-  (global-display-line-numbers-mode t)
-  (which-key-mode t)
-  (setq which-key-separator " → " )
-  (electric-indent-mode nil)  ;; Turn off the weird indenting that Emacs does by default.
-  (electric-pair-mode t)      ;; Turns on automatic parens pairing
-  (global-auto-revert-mode t) ;; Automatically reload file and show changes if the file has changed
-  (setq mouse-wheel-progressive-speed nil)
-  (setq scroll-conservatively 10)
-  (setq scroll-margin 8)
-  (scroll-bar-mode 0)
-  (setq backup-by-copying t)
-  (setq delete-old-versions t)
-  (setq version-control t)
-  (set-face-attribute 'default nil :font "JetBrainsMono NF" :height 160))
 
 (use-package autothemer
   :ensure t
   :config
   (add-to-list 'custom-theme-load-path "~/.config/emacs/themes/")
   (load-theme 'oxocarbon t))
-(use-package doom-modeline
+
+(use-package projectile
   :ensure t
-  :init (doom-modeline-mode 1))
-(use-package command-log-mode
-  :ensure t)
-(use-package nerd-icons
-  :ensure t)
-(unless (file-directory-p "~/.org/")
-  (make-directory "~/.org/" t))
-
-(require 'general-setup)
-(require 'org-setup)
-(require 'org-roam-setup)
-(require 'vertico-setup)
-(require 'projectile-setup)
-(require 'dashboard-setup)
-(require 'magit-setup)
-(require 'consult-setup)
-(require 'dirvish-setup)
-
-(use-package eglot
-  :ensure nil
-  :hook ((c-mode . eglot-ensure)
-         (c++-mode . eglot-ensure)
-         (c-ts-mode . eglot-ensure)
-         (c++-ts-mode . eglot-ensure))
   :config
-  (setq eglot-autostart t))
+  (projectile-mode)
+  (setq projectile-project-search-path '(("~/Github/" . 1)
+                                         "~/.config/emacs/")))
 
-(use-package corfu
+(use-package dashboard
   :ensure t
-  :custom
-  (corfu-auto t)               
-  (corfu-auto-delay 0.3)       
-  (corfu-auto-prefix 2)        
-  (corfu-cycle t)              
-  (corfu-preselect 'prompt)    
+  :config
+  (dashboard-setup-startup-hook)
+  (setq dashboard-items '((recents  . 5)
+                          (projects . 5)
+                          (agenda   . 5)))
   
-  :init
-  (global-corfu-mode))
-
-(use-package nerd-icons-corfu
-  :ensure t
-  :after corfu
-  :init
-  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
-
-(use-package orderless
-  :ensure t
-  :custom
-  (completion-styles '(orderless basic))
-  (completion-category-overrides '((file (styles basic partial-completion)))))
-
-(use-package eat
-  :ensure t
-  :defer
-  :hook ('eshell-load-hook #'eat-eshell-mode))
+  (setq dashboard-projects-backend 'projectile)
+  (setq dashboard-display-icons-p t) 
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-file-icons t)
+  (setq dashboard-startup-banner '(1 2 3))
+  (setq dashboard-banner-logo-title "Success is the sum of small efforts, repeated day in and day out.")
+  (setq dashboard-footer-messages
+      '(
+        "Emacs: An operating system that happens to have a text editor."
+        "Opening Emacs is the first step. Closing it is the final boss."
+        "Configuring Emacs is not procrastination, it's 'Workflow Engineering'."
+        "Your Org-mode habits are watching you. Go study Math!"
+	"E.M.A.C.S. - Eight Megabytes And Constantly Swapping (circa 1985)."
+        "Emacs is not a religion. It's just the only true way to live."
+	"Stop staring at this dashboard and M-x compile your C++ code!"))
+  (setq dashboard-set-navigator t))
 
 (use-package undo-fu-session
   :ensure t
@@ -104,7 +53,111 @@
 (setq undo-strong-limit 100663296) ; 96mb
 (setq undo-outer-limit 1006632960) ; 960mb
 
+(global-display-line-numbers-mode t)
+(which-key-mode t)
+(add-hook 'text-mode-hook 'auto-fill-mode)
+(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+(set-frame-font "JetBrainsMono NF Medium 14" nil t)
+(setq backup-directory-alist '(("." . "~/.cache/emacs/backup/")))
+(setq backup-by-copying t)
+(setq version-control nil)
+(setq delete-old-versions t)
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(setq mouse-wheel-progressive-speed nil)
+(setq scroll-conservatively 10)
+(setq scroll-margin 8)
+
+(defun insert-prev-line ()
+  "Enter insert mode in previous line"
+  (interactive)
+  (move-beginning-of-line 1)
+  (open-line 1)
+  (enable-insert-mode))
+
+(defun insert-new-line ()
+  "Enter insert mode in new line"
+  (interactive)
+  (move-end-of-line 1)
+  (open-line 1)
+  (next-line 1)
+  (enable-insert-mode)
+ )
+
+(defvar-keymap nrm-map
+  :doc "keymap for normal mode"
+  "w" 'forward-word
+  "b" 'backward-word
+  "x" 'delete-char
+  "d" 'kill-word
+  "p" 'yank
+  "k" 'kill-line
+  "K" 'kill-whole-line
+  "a" 'move-beginning-of-line
+  "e" 'move-end-of-line
+  "D" 'kill-region
+  "m w" 'mark-word
+  "m p" 'mark-paragraph
+  "m d" 'mark-defun
+  "m s" 'mark-end-of-sentence
+  "m b" 'mark-whole-buffer
+  "v" 'set-mark-command
+  "i" 'enable-insert-mode
+  "o" 'insert-new-line
+  "O" 'insert-prev-line
+  "0" 'delete-window
+  "1" 'delete-other-windows
+  "s v" 'split-window-below
+  "s s" 'split-window-right
+  "g g" 'goto-line
+  "g c" 'goto-char
+  "<" 'beginning-of-buffer
+  ">" 'end-of-buffer
+  "'" 'other-window
+  "C-d" 'scroll-up-command
+  "C-e" 'scroll-down-command
+  "/" 'undo
+  "?" 'undo-redo
+  "r" 'list-buffers
+  "M-<up>" 'org-drag-line-backward
+  "M-<down>" 'org-drag-line-forward
+  "\\" 'comment-line
+  "l" 'recenter-top-bottom
+)
+
+(define-minor-mode normal-minor-mode
+  "Normal mode"
+  :lighter " [NORMAL]"
+  :keymap nrm-map
+   (setq cursor-type 'box))
+
+(define-minor-mode insert-minor-mode
+  "Insert mode"
+  :lighter " [INSERT]"
+  :keymap nil
+  (setq cursor-type 'bar))
+
+(defun enable-insert-mode ()
+   "Enable Insert Mode"
+   (interactive)
+   (normal-minor-mode -1)
+   (insert-minor-mode 1))
+
+(defun enable-normal-mode ()
+  "Enable Normal mode"
+  (interactive)
+  (insert-minor-mode -1)
+  (normal-minor-mode 1))
+
+(keymap-global-set "<escape>" 'enable-normal-mode)
+(add-hook 'prog-mode-hook
+	  (lambda ()
+	    (when (display-graphic-p)
+	      (electric-pair-mode)
+	      (global-completion-preview-mode)
+	      (enable-normal-mode))))
+
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (when (file-exists-p custom-file)
   (load custom-file))
-(put 'upcase-region 'disabled nil)
