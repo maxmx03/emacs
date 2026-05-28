@@ -58,16 +58,33 @@
 (add-hook 'text-mode-hook 'auto-fill-mode)
 (add-to-list 'initial-frame-alist '(fullscreen . maximized))
 (set-frame-font "JetBrainsMono NF Medium 14" nil t)
-(setq backup-directory-alist '(("." . "~/.cache/emacs/backup/")))
-(setq backup-by-copying t)
-(setq version-control nil)
-(setq delete-old-versions t)
+(let ((backup-dir "~/.cache/emacs/backup/")
+      (auto-save-dir "~/.cache/emacs/auto-save/"))
+  (dolist (dir (list backup-dir auto-save-dir))
+    (when (not (file-directory-p dir))
+      (make-directory dir t))))
+(setq backup-directory-alist '(("." . "~/.cache/emacs/backup/"))
+      auto-save-file-name-transforms '((".*" "~/.cache/emacs/auto-save/" t))
+      backup-by-copying t
+      version-control nil
+      delete-old-versions t)
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (setq mouse-wheel-progressive-speed nil)
 (setq scroll-conservatively 10)
 (setq scroll-margin 8)
+(setq org-log-done 'time)
+
+(keymap-global-set "C-c l" #'org-store-link)
+(keymap-global-set "C-c a" #'org-agenda)
+(keymap-global-set "C-c c" #'org-capture)
+(keymap-global-set "C-c o" #'dashboard-open)
+
+(with-eval-after-load 'dired
+  (define-key dired-mode-map (kbd "a") 'dired-create-empty-file)
+  (define-key dired-mode-map (kbd "A") 'dired-create-directory)
+  (define-key dired-mode-map (kbd "f") 'dired-find-file))
 
 (defun insert-prev-line ()
   "Enter insert mode in previous line"
@@ -83,7 +100,7 @@
   (open-line 1)
   (next-line 1)
   (enable-insert-mode)
- )
+  )
 
 (defvar-keymap nrm-map
   :doc "keymap for normal mode"
@@ -97,6 +114,7 @@
   "a" 'move-beginning-of-line
   "e" 'move-end-of-line
   "D" 'kill-region
+  "y" 'kill-ring-save
   "m w" 'mark-word
   "m p" 'mark-paragraph
   "m d" 'mark-defun
@@ -124,6 +142,9 @@
   "M-<down>" 'org-drag-line-forward
   "\\" 'comment-line
   "l" 'recenter-top-bottom
+  "; e" 'dired
+  "n s" 'org-narrow-to-subtree
+  "n w" 'widen
 )
 
 (define-minor-mode normal-minor-mode
@@ -151,12 +172,12 @@
   (normal-minor-mode 1))
 
 (keymap-global-set "<escape>" 'enable-normal-mode)
-(add-hook 'prog-mode-hook
-	  (lambda ()
-	    (when (display-graphic-p)
+(dolist (hook '(prog-mode-hook org-mode-hook text-mode-hook))
+  (add-hook hook (lambda ()
+	      (when (display-graphic-p)
 	      (electric-pair-mode)
 	      (global-completion-preview-mode)
-	      (enable-normal-mode))))
+	      (enable-normal-mode)))))
 
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (when (file-exists-p custom-file)
