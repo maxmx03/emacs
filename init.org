@@ -1,6 +1,6 @@
 #+Title: Emacs config
 #+Author: maxmx03
-#+Description: Blazingly emacs config
+#+Description: Blazingly fast emacs config
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el :mkdirp yes
 #+Startup: showeverything
 
@@ -85,7 +85,7 @@ Package quickstart only works with package.el.
     (setq package-quickstart t) ;; For blazingly fast startup times, this line makes startup miles faster
 #+end_src
 
-* Vim/Emacs text editing
+* Vim/Emacs keybindings
 #+begin_src emacs-lisp
     (defun insert-prev-line ()
     "Enter insert mode in previous line"
@@ -126,8 +126,8 @@ Package quickstart only works with package.el.
     "O" 'insert-prev-line
     "0" 'delete-window
     "1" 'delete-other-windows
-    "s v" 'split-window-below
-    "s s" 'split-window-right
+    "s s" 'split-window-below
+    "s v" 'split-window-right
     "g g" 'goto-line
     "g c" 'goto-char
     "<" 'beginning-of-buffer
@@ -142,7 +142,6 @@ Package quickstart only works with package.el.
     "M-<down>" 'org-drag-line-forward
     "\\" 'comment-line
     "l" 'recenter-top-bottom
-    "; e" 'dired
     "n s" 'org-narrow-to-subtree
     "n w" 'widen
   )
@@ -175,53 +174,83 @@ Package quickstart only works with package.el.
 * Default Config
 
 #+begin_src emacs-lisp
-(use-package emacs
-  :init
-  ;; 1. Desativar elementos de UI antes de carregar a interface (evita "flicker")
-  (menu-bar-mode -1)
-  (tool-bar-mode -1)
-  (scroll-bar-mode -1)
+  (use-package emacs
+    :init
+    ;; 1. Desativar elementos de UI antes de carregar a interface (evita "flicker")
+    (menu-bar-mode -1)
+    (tool-bar-mode -1)
+    (scroll-bar-mode -1)
+    (which-key-mode 1)
 
-  ;; 2. Ativar modos globais
-  (global-display-line-numbers-mode t)
-  (global-hl-line-mode t)
-  (electric-pair-mode t)
-  (global-auto-revert-mode t)
+    ;; 2. Ativar modos globais
+    (global-display-line-numbers-mode t)
+    (global-hl-line-mode t)
+    (electric-pair-mode t)
+    (global-auto-revert-mode t)
 
-  ;; 3. Configuração de Fonte
-  (set-frame-font "JetBrainsMono NF Medium 14" nil t)
+    ;; 3. Configuração de Fonte
+    (set-frame-font "JetBrainsMono NF Medium 14" nil t)
 
-  ;; 4. Criar diretórios de backup de forma segura
-  (let ((backup-dir "~/.cache/emacs/backup/")
-        (auto-save-dir "~/.cache/emacs/auto-save/"))
-    (dolist (dir (list backup-dir auto-save-dir))
-      (when (not (file-directory-p dir))
-        (make-directory dir t))))
+    ;; 4. Criar diretórios de backup de forma segura
+    (let ((backup-dir "~/.cache/emacs/backup/")
+          (auto-save-dir "~/.cache/emacs/auto-save/"))
+      (dolist (dir (list backup-dir auto-save-dir))
+        (when (not (file-directory-p dir))
+          (make-directory dir t))))
 
-  :custom
-  ;; 5. Variáveis puras de customização
-  (mouse-wheel-progressive-speed nil)
-  (scroll-conservatively 10)
-  (scroll-margin 8)
-  (use-short-answers t)
-  
-  ;; Backups e Auto-save
-  (backup-directory-alist '(("." . "~/.cache/emacs/backup/")))
-  (auto-save-file-name-transforms '((".*" "~/.cache/emacs/auto-save/" t)))
-  (backup-by-copying t)
-  (version-control nil)
-  (delete-old-versions t)
+    :custom
+    ;; 5. Variáveis puras de customização
+    (mouse-wheel-progressive-speed nil)
+    (scroll-conservatively 10)
+    (scroll-margin 8)
+    (use-short-answers t)
+    
+    ;; Backups e Auto-save
+    (backup-directory-alist '(("." . "~/.cache/emacs/backup/")))
+    (auto-save-file-name-transforms '((".*" "~/.cache/emacs/auto-save/" t)))
+    (backup-by-copying t)
+    (version-control nil)
+    (delete-old-versions t)
 
-  ;; Dired e Org (Variáveis globais do Emacs)
-  (dired-kill-when-opening-new-dired-buffer t)
-  (org-log-done 'time)
-  (org-capture-templates
-   '(("t" "Todo" entry (file+headline "~/Documentos/org/task.org") "* TODO %?\n %i\n %a")
-     ("j" "Journal" entry (file+datetree "~/Documentos/org/journal.org") "* %?\nEntered on %U\n %i\n %a")))
+    ;; Dired e Org (Variáveis globais do Emacs)
+    (dired-kill-when-opening-new-dired-buffer t)
+    (org-log-done 'time)
+    (org-capture-templates
+     '(("t" "Todo" entry (file+headline "~/Documentos/org/task.org") "* TODO %?\n %i\n %a")
+       ("j" "Journal" entry (file+datetree "~/Documentos/org/journal.org") "* %?\nEntered on %U\n %i\n %a")))
 
-  ;; 6. Seus ganchos e atalhos corrigidos
-  :hook ((prog-mode org-mode text-mode) . enable-normal-mode)
-  :bind ("<escape>" . enable-normal-mode))
+    ;; 6. Seus ganchos e atalhos corrigidos
+    :hook ((prog-mode org-mode text-mode) . enable-normal-mode)
+    :bind ("<escape>" . enable-normal-mode))
+#+end_src
+
+* General keybindings
+
+#+begin_src emacs-lisp :tangle yes
+        (use-package general
+          :config
+          
+          (general-create-definer start/leader-keys
+        			  :keymaps 'override
+        			  :prefix ";"
+        			  :global-prefix ";")
+          
+          (start/leader-keys
+            "f" '(find-file :wk "Find files")
+            "g" '(projectile-grep :wk "Search with grep"))
+  	
+  	(start/leader-keys
+  	  "d" '(:ignore t :wk "Buffers & Dired")
+  	  "d s" '(switch-to-buffer :wk "Switch buffer")
+  	  "d k" '(kill-current-buffer :wk "Kill current buffer")
+  	  "d i" '(ibuffer :wk "Ibuffer")
+  	  "d n" '(next-buffer :wk "Next buffer")
+  	  "d p" '(previous-buffer :wk "Previous buffer")
+  	  "d r" '(revert-buffer :wk "Reload buffer")
+  	  "d d" '(dired :wk "Open dired")
+  	  "d j" '(dired-jump :wk "Dired jump to current"))
+  	 
+  )
 #+end_src
 
 * Moe Theme
@@ -259,14 +288,19 @@ Package quickstart only works with package.el.
 * Org
 
 #+begin_src emacs-lisp
-    (use-package org-superstar
-      :after org
-      :hook (org-mode . org-superstar-mode))
+      (use-package org-superstar
+        :after org
+        :custom
+        (org-hide-emphasis-markers t)
+        (org-pretty-entities t)
+        (org-agenda-tags-column 0)
+        (org-ellipsis "󰘕")
+        :hook (org-mode . org-superstar-mode))
 
-  (keymap-global-set "C-c l" #'org-store-link)
-  (keymap-global-set "C-c a" #'org-agenda)
-  (keymap-global-set "C-c c" #'org-capture)
-  (keymap-global-set "C-c o" #'dashboard-open)
+    (keymap-global-set "C-c l" #'org-store-link)
+    (keymap-global-set "C-c a" #'org-agenda)
+    (keymap-global-set "C-c c" #'org-capture)
+    (keymap-global-set "C-c o" #'dashboard-open)
 #+end_src
 
 * Dashboard
