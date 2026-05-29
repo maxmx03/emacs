@@ -67,3 +67,4 @@ org-roam.db
 dirvish/
 undo-fu-session/
 recentf
+package-quickstart.el
