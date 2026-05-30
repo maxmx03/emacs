@@ -2,7 +2,7 @@
 #+Author: maxmx03
 #+Description: Blazingly fast emacs config
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el :mkdirp yes
-#+Startup: showeverything
+#+STARTUP: overview
 
 * Lexical-biding
 Gives better performance, lexial closures, and code safety, allowing
@@ -87,7 +87,7 @@ Package quickstart only works with package.el.
 
 * Vim/Emacs keybindings
 #+begin_src emacs-lisp
-    (defun insert-prev-line ()
+  (defun insert-prev-line ()
     "Enter insert mode in previous line"
     (interactive)
     (move-beginning-of-line 1)
@@ -176,50 +176,36 @@ Package quickstart only works with package.el.
 #+begin_src emacs-lisp
   (use-package emacs
     :init
-    ;; 1. Desativar elementos de UI antes de carregar a interface (evita "flicker")
     (menu-bar-mode -1)
     (tool-bar-mode -1)
     (scroll-bar-mode -1)
     (which-key-mode 1)
-
-    ;; 2. Ativar modos globais
     (global-display-line-numbers-mode t)
     (global-hl-line-mode t)
     (electric-pair-mode t)
     (global-auto-revert-mode t)
-
-    ;; 3. Configuração de Fonte
     (set-frame-font "JetBrainsMono NF Medium 14" nil t)
-
-    ;; 4. Criar diretórios de backup de forma segura
     (let ((backup-dir "~/.cache/emacs/backup/")
           (auto-save-dir "~/.cache/emacs/auto-save/"))
       (dolist (dir (list backup-dir auto-save-dir))
         (when (not (file-directory-p dir))
           (make-directory dir t))))
-
     :custom
-    ;; 5. Variáveis puras de customização
     (mouse-wheel-progressive-speed nil)
     (scroll-conservatively 10)
     (scroll-margin 8)
     (use-short-answers t)
-    
-    ;; Backups e Auto-save
     (backup-directory-alist '(("." . "~/.cache/emacs/backup/")))
     (auto-save-file-name-transforms '((".*" "~/.cache/emacs/auto-save/" t)))
     (backup-by-copying t)
     (version-control nil)
     (delete-old-versions t)
-
-    ;; Dired e Org (Variáveis globais do Emacs)
+    (treesit-font-lock-level 4)
     (dired-kill-when-opening-new-dired-buffer t)
     (org-log-done 'time)
     (org-capture-templates
      '(("t" "Todo" entry (file+headline "~/Documentos/org/task.org") "* TODO %?\n %i\n %a")
        ("j" "Journal" entry (file+datetree "~/Documentos/org/journal.org") "* %?\nEntered on %U\n %i\n %a")))
-
-    ;; 6. Seus ganchos e atalhos corrigidos
     :hook ((prog-mode org-mode text-mode) . enable-normal-mode)
     :bind ("<escape>" . enable-normal-mode))
 #+end_src
@@ -232,8 +218,8 @@ Package quickstart only works with package.el.
           
           (general-create-definer start/leader-keys
         			  :keymaps 'override
-        			  :prefix ";"
-        			  :global-prefix ";")
+        			  :prefix "C-SPC"
+        			  :global-prefix "C-SPC")
           
           (start/leader-keys
             "f" '(find-file :wk "Find files")
@@ -287,20 +273,33 @@ Package quickstart only works with package.el.
 
 * Org
 
-#+begin_src emacs-lisp
-      (use-package org-superstar
-        :after org
-        :custom
-        (org-hide-emphasis-markers t)
-        (org-pretty-entities t)
-        (org-agenda-tags-column 0)
-        (org-ellipsis "󰘕")
-        :hook (org-mode . org-superstar-mode))
+** org-superstar and keymaps
 
-    (keymap-global-set "C-c l" #'org-store-link)
-    (keymap-global-set "C-c a" #'org-agenda)
-    (keymap-global-set "C-c c" #'org-capture)
-    (keymap-global-set "C-c o" #'dashboard-open)
+#+begin_src emacs-lisp
+    (use-package org-superstar
+      :after org
+      :custom
+      (org-hide-emphasis-markers t)
+      (org-pretty-entities t)
+      (org-agenda-tags-column 0)
+      (org-ellipsis "󰘕")
+      :hook ((org-mode . org-superstar-mode) (org-mode . auto-fill-mode)))
+
+      (keymap-global-set "C-c l" #'org-store-link)
+      (keymap-global-set "C-c a" #'org-agenda)
+      (keymap-global-set "C-c c" #'org-capture)
+      (keymap-global-set "C-c o" #'dashboard-open)
+#+end_src
+
+** babel
+
+#+begin_src emacs-lisp
+  (use-package org-contrib
+   :after org
+   :config
+   (org-babel-do-load-languages
+    'org-babel-load-languages
+    '((vala . t))))
 #+end_src
 
 * Dashboard
@@ -337,4 +336,24 @@ Package quickstart only works with package.el.
           "Emacs is not a religion. It's just the only true way to live."
   	"Stop staring at this dashboard and M-x compile your C++ code!"))
     (setq dashboard-set-navigator t))
+#+end_src
+
+* Modes
+
+#+begin_src emacs-lisp
+  (use-package vala-mode
+   :hook (vala-mode . enable-normal-mode))
+#+end_src
+
+* Treesitter
+
+#+begin_src emacs-lisp
+  (use-package treesit-auto
+    :after emacs
+    :custom
+    (treesit-auto-install 'prompt)
+
+    :config
+    (treesit-auto-add-to-auto-mode-alist 'all)
+    (global-treesit-auto-mode t))
 #+end_src
