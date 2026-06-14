@@ -30,7 +30,7 @@ refreshes the package-quickstart file.
   			   (add-hook 'after-save-hook #'start/org-babel-tangle-config)))
 #+end_src
 
-* Use-package
+** Use-package
 A macro that allows you to isolate package configuration in your
 .emacs in a way that is both-performance-oriented and, whell, tidy.
 
@@ -137,13 +137,19 @@ Package quickstart only works with package.el.
     "C-e" 'scroll-down-command
     "/" 'undo
     "?" 'undo-redo
-    "r" 'list-buffers
     "M-<up>" 'org-drag-line-backward
     "M-<down>" 'org-drag-line-forward
+    "C-<left>" 'previous-buffer
+    "C-<right>" 'next-buffer
     "\\" 'comment-line
     "l" 'recenter-top-bottom
     "n s" 'org-narrow-to-subtree
     "n w" 'widen
+    "; e" 'dired
+    "; r" 'ibuffer
+    "; w" 'save-buffer
+    "; f" 'find-file
+    "; g" 'project-grep
   )
 
   (define-minor-mode normal-minor-mode
@@ -184,7 +190,8 @@ Package quickstart only works with package.el.
     (global-hl-line-mode t)
     (electric-pair-mode t)
     (global-auto-revert-mode t)
-    (set-frame-font "JetBrainsMono NF Medium 14" nil t)
+    ;; (set-frame-font "JetBrainsMono NF Medium 14" nil t)
+    (set-frame-font "BlexMono Nerd Font Mono Medium 14" nil t)
     (let ((backup-dir "~/.cache/emacs/backup/")
           (auto-save-dir "~/.cache/emacs/auto-save/"))
       (dolist (dir (list backup-dir auto-save-dir))
@@ -203,9 +210,6 @@ Package quickstart only works with package.el.
     (treesit-font-lock-level 4)
     (dired-kill-when-opening-new-dired-buffer t)
     (org-log-done 'time)
-    (org-capture-templates
-     '(("t" "Todo" entry (file+headline "~/Documentos/org/task.org") "* TODO %?\n %i\n %a")
-       ("j" "Journal" entry (file+datetree "~/Documentos/org/journal.org") "* %?\nEntered on %U\n %i\n %a")))
     :hook ((prog-mode org-mode text-mode) . enable-normal-mode)
     :bind ("<escape>" . enable-normal-mode))
 #+end_src
@@ -213,30 +217,22 @@ Package quickstart only works with package.el.
 * General keybindings
 
 #+begin_src emacs-lisp :tangle yes
-        (use-package general
-          :config
-          
-          (general-create-definer start/leader-keys
-        			  :keymaps 'override
-        			  :prefix "C-SPC"
-        			  :global-prefix "C-SPC")
-          
-          (start/leader-keys
-            "f" '(find-file :wk "Find files")
-            "g" '(projectile-grep :wk "Search with grep"))
-  	
-  	(start/leader-keys
-  	  "d" '(:ignore t :wk "Buffers & Dired")
-  	  "d s" '(switch-to-buffer :wk "Switch buffer")
-  	  "d k" '(kill-current-buffer :wk "Kill current buffer")
-  	  "d i" '(ibuffer :wk "Ibuffer")
-  	  "d n" '(next-buffer :wk "Next buffer")
-  	  "d p" '(previous-buffer :wk "Previous buffer")
-  	  "d r" '(revert-buffer :wk "Reload buffer")
-  	  "d d" '(dired :wk "Open dired")
-  	  "d j" '(dired-jump :wk "Dired jump to current"))
-  	 
-  )
+  (use-package general
+    :config
+    (general-create-definer start/leader-keys
+      :keymaps 'override
+      :prefix "C-SPC"
+      :global-prefix "C-SPC")
+    (start/leader-keys
+      "f" '(find-file :wk "Find files")
+      "g" '(projectile-grep :wk "Search with grep")
+      "d" '(dashboard-open :wk "open dashboard"))
+    (start/leader-keys
+      "o" '(:ignore t :wk "Org mode")
+      "o l" '(org-store-link :wk "store link")
+      "o k" '(org-agenda :wk "open agenda")
+      "o i" '(org-capture :wk "create new note"))
+    )
 #+end_src
 
 * Doom Themes
@@ -270,7 +266,32 @@ Package quickstart only works with package.el.
 #+end_src
 
 * Org
+#+begin_src emacs-lisp
+  (use-package org
+    :ensure t
+    :bind
+    ("C-c c" . org-capture)
+    :config
+    (setq org-capture-templates
+          '(("t" "Todo" entry (file+headline "~/Documentos/org/task.org" "Tasks")
+             "* TODO %?\n %i\n %a")
+            
+            ("j" "Journal" entry (file+datetree "~/Documentos/org/journal.org")
+             "* %?\nEntered on %U\n %i\n %a")
+            
+            ("n" "Note (Type Subject)" entry
+             (file (lambda () (format "~/Documentos/org/%s.org" (read-string "Subject: "))))
+             "%(org-note-header)* %?\n\n%i"))))
 
+  (defun org-note-header ()
+    (if (= (buffer-size) 0)
+        (concat "#+TITLE: Notes\n"
+                "#+AUTHOR: maxmx03\n"
+                "#+DATE: " (format-time-string "[%Y-%m-%d %a %H:%M]") "\n"
+                "#+DESCRIPTION: Blazingly fast emacs config\n"
+                "#+STARTUP: overview\n\n")
+      ""))
+#+end_src
 ** org-superstar and keymaps
 
 #+begin_src emacs-lisp
@@ -281,12 +302,7 @@ Package quickstart only works with package.el.
       (org-pretty-entities t)
       (org-agenda-tags-column 0)
       (org-ellipsis "󰘕")
-      :hook ((org-mode . org-superstar-mode) (org-mode . auto-fill-mode)))
-
-      (keymap-global-set "C-c l" #'org-store-link)
-      (keymap-global-set "C-c a" #'org-agenda)
-      (keymap-global-set "C-c c" #'org-capture)
-      (keymap-global-set "C-c o" #'dashboard-open)
+      :hook ((org-mode . org-superstar-mode) (org-mode . auto-fill-mode))) 
 #+end_src
 
 ** babel
@@ -372,7 +388,7 @@ Package quickstart only works with package.el.
            go-ts-mode                                   ;; Enable LSP for Go
            js-ts-mode                                   ;; Enable LSP for JavaScript (TS mode)
            prisma-mode                                  ;; Enable LSP for Prisma
-           python-base-mode                             ;; Enable LSP for Python
+           ;; python-base-mode                             ;; Enable LSP for Python
            ruby-base-mode                               ;; Enable LSP for Ruby
            rust-ts-mode                                 ;; Enable LSP for Rust
            web-mode) . lsp-deferred))                   ;; Enable LSP for Web (HTML)
@@ -384,9 +400,9 @@ Package quickstart only works with package.el.
 #+begin_src emacs-lisp
 (use-package lsp-pyright
   :custom (lsp-pyright-langserver-command "pyright")
-  :hook (python-mode . (lambda ()
-                          (require 'lsp-pyright)
-                          (lsp))))  ; or lsp-deferred
+  :hook (python-ts-mode . (lambda ()
+                            (require 'lsp-pyright)
+                            (lsp-deferred))))
 #+end_src
 
 * Completion
