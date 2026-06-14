@@ -281,16 +281,7 @@ Package quickstart only works with package.el.
             
             ("n" "Note (Type Subject)" entry
              (file (lambda () (format "~/Documentos/org/%s.org" (read-string "Subject: "))))
-             "%(org-note-header)* %?\n\n%i"))))
-
-  (defun org-note-header ()
-    (if (= (buffer-size) 0)
-        (concat "#+TITLE: Notes\n"
-                "#+AUTHOR: maxmx03\n"
-                "#+DATE: " (format-time-string "[%Y-%m-%d %a %H:%M]") "\n"
-                "#+DESCRIPTION: Blazingly fast emacs config\n"
-                "#+STARTUP: overview\n\n")
-      ""))
+             ""))))
 #+end_src
 ** org-superstar and keymaps
 
@@ -308,12 +299,13 @@ Package quickstart only works with package.el.
 ** babel
 
 #+begin_src emacs-lisp
-  (use-package org-contrib
-   :after org
-   :config
-   (org-babel-do-load-languages
-    'org-babel-load-languages
-    '((vala . t))))
+    (use-package org-contrib
+     :after org
+     :config
+     (org-babel-do-load-languages
+      'org-babel-load-languages
+      '((vala . t)
+        (python . t))))
 #+end_src
 
 * Dashboard
@@ -324,6 +316,7 @@ Package quickstart only works with package.el.
     :config
     (projectile-mode)
     (setq projectile-project-search-path '(("~/Github/" . 1)
+  					 "~/Documentos/org/"
                                            "~/.config/emacs/")))
 
   (use-package dashboard
@@ -353,7 +346,6 @@ Package quickstart only works with package.el.
     (setq dashboard-set-navigator t))
 #+end_src
 
-* Modes
 
 #+begin_src emacs-lisp
   (use-package vala-mode
@@ -484,3 +476,4 @@ Package quickstart only works with package.el.
   :hook
   (marginalia-mode . nerd-icons-completion-marginalia-setup))
 #+end_src
+
