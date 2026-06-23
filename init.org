@@ -85,98 +85,6 @@ Package quickstart only works with package.el.
     (setq package-quickstart t) ;; For blazingly fast startup times, this line makes startup miles faster
 #+end_src
 
-* Vim/Emacs keybindings
-#+begin_src emacs-lisp
-  (defun insert-prev-line ()
-    "Enter insert mode in previous line"
-    (interactive)
-    (move-beginning-of-line 1)
-    (open-line 1)
-    (enable-insert-mode))
-
-  (defun insert-new-line ()
-    "Enter insert mode in new line"
-    (interactive)
-    (move-end-of-line 1)
-    (open-line 1)
-    (next-line 1)
-    (enable-insert-mode))
-
-  (defvar-keymap nrm-map
-    :doc "keymap for normal mode"
-    "w" 'forward-word
-    "b" 'backward-word
-    "x" 'delete-char
-    "d" 'kill-word
-    "p" 'yank
-    "k" 'kill-line
-    "K" 'kill-whole-line
-    "a" 'move-beginning-of-line
-    "e" 'move-end-of-line
-    "D" 'kill-region
-    "y" 'kill-ring-save
-    "m w" 'mark-word
-    "m p" 'mark-paragraph
-    "m d" 'mark-defun
-    "m s" 'mark-end-of-sentence
-    "m b" 'mark-whole-buffer
-    "v" 'set-mark-command
-    "i" 'enable-insert-mode
-    "o" 'insert-new-line
-    "O" 'insert-prev-line
-    "0" 'delete-window
-    "1" 'delete-other-windows
-    "s s" 'split-window-below
-    "s v" 'split-window-right
-    "g g" 'goto-line
-    "g c" 'goto-char
-    "<" 'beginning-of-buffer
-    ">" 'end-of-buffer
-    "'" 'other-window
-    "C-d" 'scroll-up-command
-    "C-e" 'scroll-down-command
-    "/" 'undo
-    "?" 'undo-redo
-    "M-<up>" 'org-drag-line-backward
-    "M-<down>" 'org-drag-line-forward
-    "C-<left>" 'previous-buffer
-    "C-<right>" 'next-buffer
-    "\\" 'comment-line
-    "l" 'recenter-top-bottom
-    "n s" 'org-narrow-to-subtree
-    "n w" 'widen
-    "; e" 'dired
-    "; r" 'ibuffer
-    "; w" 'save-buffer
-    "; f" 'find-file
-    "; g" 'project-grep
-  )
-
-  (define-minor-mode normal-minor-mode
-    "Normal mode"
-    :lighter " [NORMAL]"
-    :keymap nrm-map
-     (setq cursor-type 'box))
-
-  (define-minor-mode insert-minor-mode
-    "Insert mode"
-    :lighter " [INSERT]"
-    :keymap nil
-    (setq cursor-type 'bar))
-
-  (defun enable-insert-mode ()
-     "Enable Insert Mode"
-     (interactive)
-     (normal-minor-mode -1)
-     (insert-minor-mode 1))
-
-  (defun enable-normal-mode ()
-    "Enable Normal mode"
-    (interactive)
-    (insert-minor-mode -1)
-    (normal-minor-mode 1))
-#+end_src
-
 * Default Config
 
 #+begin_src emacs-lisp
@@ -190,8 +98,7 @@ Package quickstart only works with package.el.
     (global-hl-line-mode t)
     (electric-pair-mode t)
     (global-auto-revert-mode t)
-    ;; (set-frame-font "JetBrainsMono NF Medium 14" nil t)
-    (set-frame-font "BlexMono Nerd Font Mono Medium 14" nil t)
+    (set-frame-font "JetBrainsMono Nerd Font Mono 14" nil t)
     (let ((backup-dir "~/.cache/emacs/backup/")
           (auto-save-dir "~/.cache/emacs/auto-save/"))
       (dolist (dir (list backup-dir auto-save-dir))
@@ -209,9 +116,7 @@ Package quickstart only works with package.el.
     (delete-old-versions t)
     (treesit-font-lock-level 4)
     (dired-kill-when-opening-new-dired-buffer t)
-    (org-log-done 'time)
-    :hook ((prog-mode org-mode text-mode) . enable-normal-mode)
-    :bind ("<escape>" . enable-normal-mode))
+    (org-log-done 'time)) 
 #+end_src
 
 * General keybindings
@@ -221,37 +126,91 @@ Package quickstart only works with package.el.
     :config
     (general-create-definer start/leader-keys
       :keymaps 'override
-      :prefix "C-SPC"
-      :global-prefix "C-SPC")
+      :prefix ";"
+      :global-prefix ";")
     (start/leader-keys
-      "f" '(find-file :wk "Find files")
+      :keymaps 'normal
+      "w" '(save-buffer :wk "Save buffer")
+      "q" '(delete-window :wk "Close other windows")
+      "Q" '(delete-window :wk "Close window")
+      "k" '(kill-buffer :wk "Kill buffer")
+      "f" '(projectile-find-file :wk "Find files")
       "g" '(projectile-grep :wk "Search with grep")
+      "e" '(dired :wk "Open dired")
+      "r" '(switch-to-buffer :wk "Display buffers to select")
       "d" '(dashboard-open :wk "open dashboard"))
     (start/leader-keys
-      "o" '(:ignore t :wk "Org mode")
+      :keymaps 'normal
+      "o" '(:ignore t :wk "ORG")
       "o l" '(org-store-link :wk "store link")
       "o k" '(org-agenda :wk "open agenda")
       "o i" '(org-capture :wk "create new note"))
     )
+    (start/leader-keys
+      :keymaps 'normal
+      "l" '(:ignore t :wk "LSP")
+      "l h" '(lsp-describe-thing-at-point :wk "Show documentation")
+      "l r" '(lsp-rename :wk "Rename")
+      "l i" '(lsp-goto-implementation :wk "Go to Implementation")
+      "l d" '(lsp-goto-type-definition :wk "Go to type definition")
+    )
 #+end_src
 
-* Doom Themes
+* Evil mode
 
 #+begin_src emacs-lisp
-    (use-package doom-themes
-      :custom
-      ;; Global settings (defaults)
-      (doom-themes-enable-bold t)   ; if nil, bold is universally disabled
-      (doom-themes-enable-italic t) ; if nil, italics is universally disabled
-      :config
-      (load-theme 'doom-one t)
-      (doom-themes-visual-bell-config)
-      (doom-themes-org-config))
+  (use-package evil
+    :hook (after-init . evil-mode)
+    :init
+    (evil-mode)
+    :config
+    (evil-set-initial-state 'eat-mode 'insert) ;; Set initial state in eat terminal to insert mode
+    (define-key evil-normal-state-map (kbd "C-e") 'evil-scroll-up)
+    (define-key evil-normal-state-map (kbd "s") nil)
 
-  (use-package doom-modeline
-    :ensure t
-    :init (doom-modeline-mode 1))
-#+end_Src
+    (define-key evil-normal-state-map (kbd "s s") 'split-window-below)
+    (define-key evil-normal-state-map (kbd "s v") 'split-window-right)
+    (global-set-key [C-backspace] 'evil-delete-backward-word) ;; Make C-backspace less agressive
+    :custom
+    (evil-want-keybinding nil)    ;; Disable evil bindings in other modes (It's not consistent and not good)
+    (evil-want-C-u-scroll t)      ;; Set C-u to scroll up
+    (evil-want-C-i-jump nil)      ;; Disables C-i jump
+    (evil-undo-system 'undo-redo) ;; C-r to redo
+    (evil-want-fine-undo t)
+    ;; (evil-respect-visual-line-mode t) ;; Move in wrap lines
+    ;; Unmap keys in 'evil-maps. If not done, org-return-follows-link will not work
+    :bind (:map evil-motion-state-map
+                ("SPC" . nil)
+                ("RET" . nil)
+                ("TAB" . nil)))
+
+  (use-package evil-collection
+    :after evil
+    :config
+    ;; Setting where to use evil-collection)
+    (setq evil-collection-mode-list '(dired ibuffer magit corfu consult info (package-menu package) bookmark dashboard))
+    (evil-collection-init))
+
+  (use-package evil-commentary
+  :after evil
+  :config
+  (evil-commentary-mode 1))
+#+end_src
+
+* Kanagawa
+
+#+begin_src emacs-lisp
+  (use-package kanagawa-themes
+   :config
+   (load-theme 'kanagawa-wave t))
+#+end_src
+
+* Doom modeline
+
+#+begin_src emacs-lisp
+   (use-package doom-modeline
+     :init (doom-modeline-mode 1))
+#+end_src
 
 * Undo
 
@@ -267,21 +226,22 @@ Package quickstart only works with package.el.
 
 * Org
 #+begin_src emacs-lisp
-  (use-package org
-    :ensure t
-    :bind
-    ("C-c c" . org-capture)
-    :config
-    (setq org-capture-templates
-          '(("t" "Todo" entry (file+headline "~/Documentos/org/task.org" "Tasks")
-             "* TODO %?\n %i\n %a")
-            
-            ("j" "Journal" entry (file+datetree "~/Documentos/org/journal.org")
-             "* %?\nEntered on %U\n %i\n %a")
-            
-            ("n" "Note (Type Subject)" entry
-             (file (lambda () (format "~/Documentos/org/%s.org" (read-string "Subject: "))))
-             ""))))
+    (use-package org
+      :ensure t
+      :bind
+      ("C-c c" . org-capture)
+      :config
+      (setq org-agenda-files '("~/Documentos/org/task.org"))
+      (setq org-capture-templates
+            '(("t" "Todo" entry (file+headline "~/Documentos/org/task.org" "Tasks")
+               "* TODO %?\n %i\n %a")
+              
+              ("j" "Journal" entry (file+datetree "~/Documentos/org/journal.org")
+               "* %?\nEntered on %U\n %i\n %a")
+              
+              ("n" "Note (Type Subject)" entry
+               (file (lambda () (format "~/Documentos/org/%s.org" (read-string "Subject: "))))
+               ""))))
 #+end_src
 ** org-superstar and keymaps
 
@@ -368,23 +328,23 @@ Package quickstart only works with package.el.
 * Lsp
 
 #+begin_src emacs-lisp
-  (use-package lsp-mode
-  :init
-  (setq lsp-keymap-prefix "C-c l")
-  :hook (;; Replace XXX-mode with concrete major mode (e.g. python-mode)
-         (lsp-mode . lsp-enable-which-key-integration)  ;; Integrate with Which Key
-         ((js-mode                                      ;; Enable LSP for JavaScript
-           tsx-ts-mode                                  ;; Enable LSP for TSX
-           typescript-ts-base-mode                      ;; Enable LSP for TypeScript
-           css-mode                                     ;; Enable LSP for CSS
-           go-ts-mode                                   ;; Enable LSP for Go
-           js-ts-mode                                   ;; Enable LSP for JavaScript (TS mode)
-           prisma-mode                                  ;; Enable LSP for Prisma
-           ;; python-base-mode                             ;; Enable LSP for Python
-           ruby-base-mode                               ;; Enable LSP for Ruby
-           rust-ts-mode                                 ;; Enable LSP for Rust
-           web-mode) . lsp-deferred))                   ;; Enable LSP for Web (HTML)
-  :commands lsp)
+    (use-package lsp-mode
+    :init
+    (setq lsp-keymap-prefix "C-c l")
+    :hook (;; Replace XXX-mode with concrete major mode (e.g. python-mode)
+           (lsp-mode . lsp-enable-which-key-integration)  ;; Integrate with Which Key
+           ((js-mode                                      ;; Enable LSP for JavaScript
+             tsx-ts-mode                                  ;; Enable LSP for TSX
+             typescript-ts-base-mode                      ;; Enable LSP for TypeScript
+             css-mode                                     ;; Enable LSP for CSS
+             go-ts-mode                                   ;; Enable LSP for Go
+             js-ts-mode                                   ;; Enable LSP for JavaScript (TS mode)
+             prisma-mode                                  ;; Enable LSP for Prisma
+             ;; python-base-mode                             ;; Enable LSP for Python
+             ruby-base-mode                               ;; Enable LSP for Ruby
+             rust-ts-mode                                 ;; Enable LSP for Rust
+             web-mode) . lsp-deferred))                   ;; Enable LSP for Web (HTML)
+    :commands lsp)
 #+end_src
 
 ** Python lsp
