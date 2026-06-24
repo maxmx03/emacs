@@ -3,6 +3,34 @@
 #+Description: Blazingly fast emacs config
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el :mkdirp yes
 #+STARTUP: overview
+#+OPTIONS: toc:2
+
+* Table of Contents :toc:
+- [[#lexical-biding][Lexical-biding]]
+- [[#auto-tangle-configuration-file][Auto-tangle Configuration file]]
+  - [[#use-package][Use-package]]
+  - [[#use-package-example][Use-package example]]
+  - [[#setting-package-repositories][Setting package repositories]]
+  - [[#package-quickstart][Package quickstart]]
+- [[#default-config][Default Config]]
+- [[#which-key][Which-key]]
+- [[#general-keybindings][General keybindings]]
+- [[#evil-mode][Evil mode]]
+- [[#kanagawa][Kanagawa]]
+- [[#doom-modeline][Doom modeline]]
+- [[#undo][Undo]]
+- [[#org][Org]]
+  - [[#org-superstar-and-keymaps][org-superstar and keymaps]]
+  - [[#babel][babel]]
+  - [[#toc-org][toc-org]]
+- [[#dashboard][Dashboard]]
+- [[#treesitter][Treesitter]]
+- [[#lsp][Lsp]]
+  - [[#python-lsp][Python lsp]]
+- [[#completion][Completion]]
+  - [[#corfu][Corfu]]
+  - [[#ordeless][Ordeless]]
+  - [[#vertico-and-marginalia][Vertico and Marginalia]]
 
 * Lexical-biding
 Gives better performance, lexial closures, and code safety, allowing
@@ -93,7 +121,6 @@ Package quickstart only works with package.el.
     (menu-bar-mode -1)
     (tool-bar-mode -1)
     (scroll-bar-mode -1)
-    (which-key-mode 1)
     (global-display-line-numbers-mode t)
     (global-hl-line-mode t)
     (electric-pair-mode t)
@@ -119,41 +146,58 @@ Package quickstart only works with package.el.
     (org-log-done 'time)) 
 #+end_src
 
+* Which-key
+
+#+begin_src emacs-lisp
+  (use-package which-key
+    :init
+    (which-key-mode 1)
+    :custom
+    (which-key-idle-delay 0.3))
+#+end_src
+
 * General keybindings
 
 #+begin_src emacs-lisp :tangle yes
-  (use-package general
-    :config
-    (general-create-definer start/leader-keys
-      :keymaps 'override
-      :prefix ";"
-      :global-prefix ";")
-    (start/leader-keys
-      :keymaps 'normal
-      "w" '(save-buffer :wk "Save buffer")
-      "q" '(delete-window :wk "Close other windows")
-      "Q" '(delete-window :wk "Close window")
-      "k" '(kill-buffer :wk "Kill buffer")
-      "f" '(projectile-find-file :wk "Find files")
-      "g" '(projectile-grep :wk "Search with grep")
-      "e" '(dired :wk "Open dired")
-      "r" '(switch-to-buffer :wk "Display buffers to select")
-      "d" '(dashboard-open :wk "open dashboard"))
-    (start/leader-keys
-      :keymaps 'normal
-      "o" '(:ignore t :wk "ORG")
-      "o l" '(org-store-link :wk "store link")
-      "o k" '(org-agenda :wk "open agenda")
-      "o i" '(org-capture :wk "create new note"))
-    )
-    (start/leader-keys
-      :keymaps 'normal
-      "l" '(:ignore t :wk "LSP")
-      "l h" '(lsp-describe-thing-at-point :wk "Show documentation")
-      "l r" '(lsp-rename :wk "Rename")
-      "l i" '(lsp-goto-implementation :wk "Go to Implementation")
-      "l d" '(lsp-goto-type-definition :wk "Go to type definition")
-    )
+    (use-package general
+      :config
+      (general-create-definer start/leader-keys
+        :keymaps 'override
+        :prefix ";"
+        :global-prefix ";")
+      (start/leader-keys
+        :keymaps 'normal
+        "w" '(save-buffer :wk "Save buffer")
+        "q" '(delete-window :wk "Close other windows")
+        "Q" '(delete-window :wk "Close window")
+        "k" '(kill-buffer :wk "Kill buffer")
+        "f" '(projectile-find-file :wk "Find files")
+        "g" '(projectile-grep :wk "Search with grep")
+        "e" '(dired :wk "Open dired")
+        "r" '(switch-to-buffer :wk "Display buffers to select")
+        "d" '(dashboard-open :wk "open dashboard"))
+      (start/leader-keys
+        :keymaps 'normal
+        "b" '(:ignore t :wk "BUFFER")
+        "bb" '(switch-to-buffer :wk "Switch buffer")
+        "bk" '(kill-this-buffer :wk "Kill this buffer")
+        "bn" '(next-buffer :wk "Next buffer")
+        "bp" '(previous-buffer :wk "Previous buffer")
+        "br" '(revert-buffer :wk "Reload buffer"))
+      (start/leader-keys
+        :keymaps 'normal
+        "o" '(:ignore t :wk "ORG")
+        "o l" '(org-store-link :wk "store link")
+        "o k" '(org-agenda :wk "open agenda")
+        "o i" '(org-capture :wk "create new note"))
+      (start/leader-keys
+        :keymaps 'normal
+        "l" '(:ignore t :wk "LSP")
+        "l h" '(lsp-describe-thing-at-point :wk "Show documentation")
+        "l r" '(lsp-rename :wk "Rename")
+        "l i" '(lsp-goto-implementation :wk "Go to Implementation")
+        "l d" '(lsp-goto-type-definition :wk "Go to type definition"))
+      )
 #+end_src
 
 * Evil mode
@@ -268,16 +312,23 @@ Package quickstart only works with package.el.
         (python . t))))
 #+end_src
 
+** toc-org
+
+#+begin_src emacs-lisp
+  (use-package toc-org
+    :commands toc-org-enable
+    :init (add-hook 'org-mode-hook 'toc-org-enable))
+#+end_src
+
 * Dashboard
 
 #+begin_src emacs-lisp
   (use-package projectile
-    :ensure t
+    :init
+    (setq projectile-project-search-path '("~/Github/" "~/Documentos/" "~/.config"))
+    (setq projectile-cleanup-known-projects nil)
     :config
-    (projectile-mode)
-    (setq projectile-project-search-path '(("~/Github/" . 1)
-  					 "~/Documentos/org/"
-                                           "~/.config/emacs/")))
+    (projectile-mode))
 
   (use-package dashboard
     :ensure t
@@ -285,14 +336,14 @@ Package quickstart only works with package.el.
     (dashboard-setup-startup-hook)
     (setq dashboard-items '((recents  . 5)
                             (projects . 5)
-                            (agenda   . 5)))
+                            (agenda   . 10)))
     
     (setq dashboard-projects-backend 'projectile)
     (setq dashboard-display-icons-p t) 
     (setq dashboard-icon-type 'nerd-icons)
     (setq dashboard-set-heading-icons t)
     (setq dashboard-set-file-icons t)
-    (setq dashboard-startup-banner '(1 2 3))
+    (setq dashboard-startup-banner '(1 2 3 logo))
     (setq dashboard-banner-logo-title "Success is the sum of small efforts, repeated day in and day out.")
     (setq dashboard-footer-messages
         '(
