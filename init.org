@@ -25,6 +25,7 @@
   - [[#toc-org][toc-org]]
   - [[#org-tempo][org-tempo]]
 - [[#dashboard][Dashboard]]
+- [[#centaur-tabs][Centaur Tabs]]
 - [[#treesitter][Treesitter]]
 - [[#lsp][Lsp]]
   - [[#python-lsp][Python lsp]]
@@ -183,7 +184,7 @@ Package quickstart only works with package.el.
       :keymaps 'normal
       "b" '(:ignore t :wk "BUFFER")
       "bb" '(switch-to-buffer :wk "Switch buffer")
-      "bk" '(kill-this-buffer :wk "Kill this buffer")
+      "bk" '(kill-current-buffer :wk "Kill this buffer")
       "bn" '(next-buffer :wk "Next buffer")
       "bp" '(previous-buffer :wk "Previous buffer")
       "br" '(revert-buffer :wk "Reload buffer"))
@@ -211,7 +212,6 @@ Package quickstart only works with package.el.
     :hook (after-init . evil-mode)
     :init
     (evil-mode)
-    (global-tab-line-mode 1)
     :config
     (evil-set-initial-state 'eat-mode 'insert) ;; Set initial state in eat terminal to insert mode
     (define-key evil-normal-state-map (kbd "C-e") 'evil-scroll-up)
@@ -227,15 +227,6 @@ Package quickstart only works with package.el.
     (define-key evil-normal-state-map (kbd "j") 'evil-window-down)
     (define-key evil-normal-state-map (kbd "k") 'evil-window-up)
     (define-key evil-normal-state-map (kbd "l") 'evil-window-right)
-
-    (define-key evil-normal-state-map (kbd "C-<left>")  'evil-window-left)
-    (define-key evil-normal-state-map (kbd "C-<down>")  'evil-window-down)
-    (define-key evil-normal-state-map (kbd "C-<up>")    'evil-window-up)
-    (define-key evil-normal-state-map (kbd "C-<right>") 'evil-window-right)
-
-    (define-key evil-normal-state-map (kbd "M-<left>")  'tab-line-switch-to-prev-tab)
-    (define-key evil-normal-state-map (kbd "M-<right>") 'tab-line-switch-to-next-tab)
-    (define-key evil-normal-state-map (kbd "M-<down>")  'kill-current-buffer) ; Fecha a aba/buffer
 
     (global-set-key [C-backspace] 'evil-delete-backward-word) ;; Make C-backspace less agressive
     :custom
@@ -407,6 +398,21 @@ begin_src tag.
           "Emacs is not a religion. It's just the only true way to live."
   	"Stop staring at this dashboard and M-x compile your C++ code!"))
     (setq dashboard-set-navigator t))
+#+end_src
+
+* Centaur Tabs
+
+#+begin_src emacs-lisp
+    (use-package centaur-tabs
+      :demand
+      :config
+      (centaur-tabs-mode t)
+      :bind
+      ("C-<up>" . centaur-tabs-ace-jump)
+      ("C-<left>" . centaur-tabs-backward)
+      ("C-<right>" . centaur-tabs-forward)
+      ("C-<down>" . kill-current-buffer)
+  )
 #+end_src
 
 * Treesitter
