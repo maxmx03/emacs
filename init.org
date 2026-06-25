@@ -12,6 +12,7 @@
   - [[#use-package-example][Use-package example]]
   - [[#setting-package-repositories][Setting package repositories]]
   - [[#package-quickstart][Package quickstart]]
+- [[#emacs-cache-and-temporary-files][Emacs Cache and Temporary Files]]
 - [[#default-config][Default Config]]
 - [[#which-key][Which-key]]
 - [[#general-keybindings][General keybindings]]
@@ -118,6 +119,65 @@ Package quickstart only works with package.el.
     (setq package-quickstart t) ;; For blazingly fast startup times, this line makes startup miles faster
 #+end_src
 
+* Emacs Cache and Temporary Files
+
+#+begin_src emacs-lisp
+  (defcustom my/cache-directory
+    (expand-file-name ".cache/emacs" gnus-home-directory)
+    "Base directory for Emacs cache files."
+    :type `(choice
+  		  (const     :tag "Inside Emacs config  (cache/ in user-emacs-directory)"
+  					 ,(expand-file-name ".cache/emacs" gnus-home-directory))
+  		  (const     :tag "System temp          (/tmp/emacs-cache/)" "/tmp/emacs-cache/")
+  		  (directory :tag "Custom directory"))
+    :group 'my)
+
+  (when custom-file
+    (load custom-file 'noerror 'nomessage))
+
+  (defvar my/cache-paths
+    '(;; Files:
+  	(bookmark-file               . "bookmarks")
+  	(ielm-history-file-name      . "ielm-history.eld")
+  	(project-list-file           . "projects")
+  	(recentf-save-file           . "recentf")
+  	(savehist-file               . "history")
+  	(save-place-file             . "saveplace")
+  	(transient-history-file      . "transient/history.el")
+  	(transient-levels-file       . "transient/levels.el")
+  	(transient-values-file       . "transient/values.el")
+  	(tramp-persistency-file-name . "tramp")
+  	(nsm-settings-file           . "network-security.data")
+  	;; Directories:
+  	(auto-saves                  . "auto-saves/")
+  	(auto-saves-sessions         . "auto-saves/sessions/")
+  	(multisession-directory      . "multisession/")
+  	(url-configuration-directory . "url/")
+  	(image-dired-dir             . "image-dired/")
+  	(erc-log-channels-directory  . "erc/logs/")
+  	(erc-image-cache-directory   . "erc/images/")
+  	(rcirc-log-directory         . "rcirc/logs/"))
+    "Alist of (KEY . RELATIVE-PATH) for cache locations.")
+
+  (defun my/cache--path (key)
+    "Return the absolute path for KEY in `my/cache-paths'."
+    (let ((rel (cdr (assq key my/cache-paths))))
+  	(unless rel
+  	  (error "my/cache--path: Unknown key %S" key))
+  	(expand-file-name rel my/cache-directory)))
+
+  (defun my/cache--ensure-dirs ()
+    "Create every directory referenced by `my/cache-paths'."
+    (dolist (entry my/cache-paths)
+  	(let* ((abs (my/cache--path (car entry)))
+  		   (dir (if (directory-name-p abs)
+  					abs
+  				  (file-name-directory abs))))
+  	  (make-directory dir t))))
+
+  (my/cache--ensure-dirs)
+#+end_src
+
 * Default Config
 
 #+begin_src emacs-lisp
@@ -132,24 +192,35 @@ Package quickstart only works with package.el.
     (electric-indent-mode -1)
     (global-auto-revert-mode t)
     (set-frame-font "JetBrainsMono Nerd Font Mono 14" nil t)
-    (let ((backup-dir "~/.cache/emacs/backup/")
-          (auto-save-dir "~/.cache/emacs/auto-save/"))
-      (dolist (dir (list backup-dir auto-save-dir))
-        (when (not (file-directory-p dir))
-          (make-directory dir t))))
     :custom
+    ;; cleaning cache
+    (bookmark-file               (my/cache--path 'bookmark-file))
+    (ielm-history-file-name      (my/cache--path 'ielm-history-file-name))
+    (project-list-file           (my/cache--path 'project-list-file))
+    (recentf-save-file           (my/cache--path 'recentf-save-file))
+    (savehist-file               (my/cache--path 'savehist-file))
+    (save-place-file             (my/cache--path 'save-place-file))
+    (transient-history-file      (my/cache--path 'transient-history-file))
+    (transient-levels-file       (my/cache--path 'transient-levels-file))
+    (transient-values-file       (my/cache--path 'transient-values-file))
+    (nsm-settings-file           (my/cache--path 'nsm-settings-file))
+    (multisession-directory      (my/cache--path 'multisession-directory))
+    (url-configuration-directory (my/cache--path 'url-configuration-directory))
+    (create-lockfiles            nil)
+    (make-backup-files           nil)
+    (auto-save-default           t)
     (mouse-wheel-progressive-speed nil)
     (scroll-conservatively 10)
     (scroll-margin 8)
     (use-short-answers t)
-    (backup-directory-alist '(("." . "~/.cache/emacs/backup/")))
-    (auto-save-file-name-transforms '((".*" "~/.cache/emacs/auto-save/" t)))
-    (backup-by-copying t)
-    (version-control nil)
-    (delete-old-versions t)
     (treesit-font-lock-level 4)
     (dired-kill-when-opening-new-dired-buffer t)
-    (org-log-done 'time)) 
+    (org-log-done 'time)
+    :config
+    (setq auto-save-list-file-prefix (my/cache--path 'auto-saves-sessions)
+  	  auto-save-file-name-transforms
+  	  `((".*" ,(my/cache--path 'auto-saves) t)))
+    (setopt tramp-persistency-file-name (my/cache--path 'tramp-persistency-file-name)))
 #+end_src
 
 * Which-key
