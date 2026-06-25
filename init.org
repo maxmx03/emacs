@@ -123,11 +123,11 @@ Package quickstart only works with package.el.
 
 #+begin_src emacs-lisp
   (defcustom my/cache-directory
-    (expand-file-name ".cache/emacs" gnus-home-directory)
+    (expand-file-name "emacs/" "~/.cache")
     "Base directory for Emacs cache files."
     :type `(choice
   		  (const     :tag "Inside Emacs config  (cache/ in user-emacs-directory)"
-  					 ,(expand-file-name ".cache/emacs" gnus-home-directory))
+  					 ,(expand-file-name "emacs/" "~/.cache"))
   		  (const     :tag "System temp          (/tmp/emacs-cache/)" "/tmp/emacs-cache/")
   		  (directory :tag "Custom directory"))
     :group 'my)
