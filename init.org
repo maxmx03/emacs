@@ -15,7 +15,7 @@
 - [[#default-config][Default Config]]
 - [[#which-key][Which-key]]
 - [[#general-keybindings][General keybindings]]
-- [[#evil-mode][Evil mode]]
+- [[#evil-mode-and-keybindings][Evil mode and Keybindings]]
 - [[#kanagawa][Kanagawa]]
 - [[#doom-modeline][Doom modeline]]
 - [[#undo][Undo]]
@@ -34,6 +34,8 @@
   - [[#ordeless][Ordeless]]
   - [[#vertico-and-marginalia][Vertico and Marginalia]]
 - [[#ws-butler][WS butler]]
+- [[#eat-emulate-a-terminal][Eat (Emulate A Terminal)]]
+- [[#divirsh][Divirsh]]
 
 * Lexical-biding
 Gives better performance, lexial closures, and code safety, allowing
@@ -177,9 +179,10 @@ Package quickstart only works with package.el.
       "k" '(kill-buffer :wk "Kill buffer")
       "f" '(projectile-find-file :wk "Find files")
       "g" '(projectile-grep :wk "Search with grep")
-      "e" '(dired :wk "Open dired")
+      "e" '(dirvish :wk "Open dired")
       "r" '(switch-to-buffer :wk "Display buffers to select")
-      "d" '(dashboard-open :wk "open dashboard"))
+      "d" '(dashboard-open :wk "Open dashboard")
+      "x" '(eat :wk "Toggle terminal emulator"))
     (start/leader-keys
       :keymaps 'normal
       "b" '(:ignore t :wk "BUFFER")
@@ -205,7 +208,7 @@ Package quickstart only works with package.el.
     )
 #+end_src
 
-* Evil mode
+* Evil mode and Keybindings
 
 #+begin_src emacs-lisp
   (use-package evil
@@ -259,18 +262,19 @@ Package quickstart only works with package.el.
 
 #+begin_src emacs-lisp
   (use-package kanagawa-themes
-    :vc (:url "https://github.com/maxmx03/kanagawa-emacs.git"
-            :branch "main"
-            :rev :newest)
-    :config
-    (load-theme 'kanagawa-wave t))
+      :vc (:url "https://github.com/maxmx03/kanagawa-emacs.git"
+                :branch "main"
+              :rev :newest)
+      :config
+      ;; (add-to-list 'default-frame-alist '(alpha-background . 95))
+      (load-theme 'kanagawa-wave t))
 #+end_src
 
 * Doom modeline
 
 #+begin_src emacs-lisp
-   (use-package doom-modeline
-     :init (doom-modeline-mode 1))
+  (use-package doom-modeline
+    :init (doom-modeline-mode 1))
 #+end_src
 
 * Undo
@@ -547,4 +551,31 @@ Removes whitespace from the ends of lines.
 #+begin_src emacs-lisp
   (use-package ws-butler
     :hook (after-init . ws-butler-global-mode))
+#+end_src
+
+* Eat (Emulate A Terminal)
+
+#+begin_src emacs-lisp
+    (use-package eat
+      :defer
+      :hook ('eshell-load-hook #'eat-eshell-mode))
+#+end_src
+
+* Divirsh
+
+Dirvish enhances Emacs's builtin-in *Dired mode*, providing a visually
+appeling and highly customizable interface.
+
+#+begin_src emacs-lisp
+    (use-package dirvish
+      :init
+      (dirvish-override-dired-mode)
+      :custom
+       (dirvish-attributes
+    	 '(vc-state subtree-state nerd-icons collapse file-time file-size)
+    	 dirvish-side-attributes
+    	 '(vc-state nerd-icons collapse file-size))
+      )
+
+  (use-package nerd-icons)
 #+end_src
