@@ -28,15 +28,14 @@
 - [[#dashboard][Dashboard]]
 - [[#centaur-tabs][Centaur Tabs]]
 - [[#treesitter][Treesitter]]
-- [[#lsp][Lsp]]
-  - [[#python-lsp][Python lsp]]
+- [[#eglot-and-mason][Eglot and Mason]]
 - [[#completion][Completion]]
   - [[#corfu][Corfu]]
   - [[#ordeless][Ordeless]]
   - [[#vertico-and-marginalia][Vertico and Marginalia]]
 - [[#ws-butler][WS butler]]
 - [[#eat-emulate-a-terminal][Eat (Emulate A Terminal)]]
-- [[#divirsh][Divirsh]]
+- [[#dired-and-divirsh][Dired and Divirsh]]
 
 * Lexical-biding
 Gives better performance, lexial closures, and code safety, allowing
@@ -270,12 +269,19 @@ Package quickstart only works with package.el.
       "on" '(org-capture :wk "create new note"))
     (start/leader-keys
       :keymaps 'normal
-      "l" '(:ignore t :wk "LSP")
-      "lh" '(lsp-describe-thing-at-point :wk "Show documentation")
-      "lr" '(lsp-rename :wk "Rename")
-      "li" '(lsp-goto-implementation :wk "Go to Implementation")
-      "ld" '(lsp-goto-type-definition :wk "Go to type definition")
-      "lf" '(lsp-format-buffer :wk "Forat buffer with LSP"))
+      "l" '(:ignore t :wk "EGLOT")
+      "le" '(eglot-reconnect :wk "Eglot Reconnect")
+      "ld" '(eldoc-doc-buffer :wk "Eldoc Buffer")
+      "lf" '(eglot-format :wk "Eglot Format")
+      "ln" '(flymake-goto-next-error :wk "Flymake next error")
+      "lp" '(flymake-goto-prev-error :wk "Flymake previous error")
+      "la" '(eglot-code-actions :wk "Eglot code actions")
+      "lr" '(eglot-rename :wk "Eglot Rename")
+      "li" '(xref-find-definitions :wk "Find definition")
+      "ls" '(xref-find-references :wk "Find references")
+      "lv" '(:ignore t :wk "Elisp")
+      "lvb" '(eval-buffer :wk "Evaluate elisp in buffer")
+      "lvr" '(eval-region :wk "Evaluate elisp in region"))
     )
 #+end_src
 
@@ -333,12 +339,9 @@ Package quickstart only works with package.el.
 
 #+begin_src emacs-lisp
   (use-package kanagawa-themes
-      :vc (:url "https://github.com/maxmx03/kanagawa-emacs.git"
-                :branch "main"
-              :rev :newest)
-      :config
-      ;; (add-to-list 'default-frame-alist '(alpha-background . 95))
-      (load-theme 'kanagawa-wave t))
+    :config
+    ;; (add-to-list 'default-frame-alist '(alpha-background . 95))
+    (load-theme 'kanagawa-wave t))
 #+end_src
 
 * Doom modeline
@@ -503,37 +506,40 @@ begin_src tag.
     (global-treesit-auto-mode t))
 #+end_src
 
-* Lsp
+* Eglot and Mason
 
 #+begin_src emacs-lisp
-    (use-package lsp-mode
-    :init
-    (setq lsp-keymap-prefix "C-c l")
-    :hook (;; Replace XXX-mode with concrete major mode (e.g. python-mode)
-           (lsp-mode . lsp-enable-which-key-integration)  ;; Integrate with Which Key
-           ((js-mode                                      ;; Enable LSP for JavaScript
-             tsx-ts-mode                                  ;; Enable LSP for TSX
-             typescript-ts-base-mode                      ;; Enable LSP for TypeScript
-             css-mode                                     ;; Enable LSP for CSS
-             go-ts-mode                                   ;; Enable LSP for Go
-             js-ts-mode                                   ;; Enable LSP for JavaScript (TS mode)
-             prisma-mode                                  ;; Enable LSP for Prisma
-             ;; python-base-mode                             ;; Enable LSP for Python
-             ruby-base-mode                               ;; Enable LSP for Ruby
-             rust-ts-mode                                 ;; Enable LSP for Rust
-             web-mode) . lsp-deferred))                   ;; Enable LSP for Web (HTML)
-    :commands lsp)
-#+end_src
+    (use-package eglot
+      :ensure nil ;; 'nil' porque já vem embutido no Emacs 29+
+      :hook
+      ((js-mode
+        tsx-ts-mode
+        typescript-ts-base-mode                      ;; Enable LSP for TypeScript
+        css-mode                                     ;; Enable LSP for CSS
+        go-ts-mode                                   ;; Enable LSP for Go
+        js-ts-mode                                   ;; Enable LSP for JavaScript (TS mode)
+        prisma-mode                                  ;; Enable LSP for Prisma
+        ruby-base-mode                               ;; Enable LSP for Ruby
+        rust-ts-mode                                 ;; Enable LSP for Rust
+        html-ts-mode) . eglot-ensure)
+      :custom
+      (eglot-events-buffer-size 0) ;; No event buffers (LSP server logs)
+      (eglot-autoshutdown t);; Shutdown unused servers.
+      (eglot-report-progress nil))
 
-** Python lsp
+    ;; Package manager for LSP, DAP, linters, and more for the Emacs Operating System.
+    (use-package mason
+      :hook (after-init . mason-ensure))
 
-#+begin_src emacs-lisp
-(use-package lsp-pyright
-  :custom (lsp-pyright-langserver-command "pyright")
-  :hook (python-ts-mode . (lambda ()
-                            (require 'lsp-pyright)
-                            (lsp-deferred))))
-#+end_src
+    ;; Show flymake errors with sideline.
+    (use-package sideline-flymake
+      :hook (flymake-mode . sideline-mode)
+      :custom
+      (flymake-fringe-indicator-position nil)
+      (flymake-margin-indicator-position nil)
+      (sideline-flymake-display-mode 'line) ;; Show errors on the current line
+      (sideline-backends-right '(sideline-flymake)))
+  #+end_src
 
 * Completion
 ** Corfu
@@ -632,21 +638,28 @@ Removes whitespace from the ends of lines.
       :hook ('eshell-load-hook #'eat-eshell-mode))
 #+end_src
 
-* Divirsh
+* Dired and Divirsh
 
 Dirvish enhances Emacs's builtin-in *Dired mode*, providing a visually
 appeling and highly customizable interface.
 
 #+begin_src emacs-lisp
-    (use-package dirvish
-      :init
-      (dirvish-override-dired-mode)
-      :custom
-       (dirvish-attributes
-    	 '(vc-state subtree-state nerd-icons collapse file-time file-size)
-    	 dirvish-side-attributes
-    	 '(vc-state nerd-icons collapse file-size))
-      )
+  (use-package dired
+    :ensure nil
+    :config
+    (evil-define-key 'normal dired-mode-map
+      "a" #'dired-create-empty-file
+      "A" #'dired-create-directory
+      "d" #'dired-do-delete))
+
+  (use-package dirvish
+    :init
+    (dirvish-override-dired-mode)
+    :custom
+    (dirvish-attributes
+     '(vc-state subtree-state nerd-icons collapse file-time file-size)
+     dirvish-side-attributes
+     '(vc-state nerd-icons collapse file-size)))
 
   (use-package nerd-icons)
 #+end_src
