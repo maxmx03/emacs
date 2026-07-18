@@ -20,6 +20,13 @@
 	    (setq file-name-handler-alist last-file-name-handler-alist)))
 
 
+;; Fix white flash on startup
+;; Don't do it when using daemon or terminal, because it messes up the background color.
+(unless (or (daemonp) (not initial-window-system))
+  (setq default-frame-alist '(
+                              (foreground-color . "white")
+                              (background-color . "#1F1F28"))))
+
 ;; Disable UI elements before UI initialization
 (setq menu-bar-mode nil) ;; Disable the menu bar
 (setq tool-bar-mode nil) ;; Disable the tool bar
