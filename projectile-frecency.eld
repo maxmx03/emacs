@@ -1,0 +1,1 @@
+(("/home/maxmx03/.config/emacs/" ("init.el" 2 1785196583) ("init.org" 12 1785199469)) ("/home/maxmx03/Documentos/org/" ("task.org" 14 1785199461)))
